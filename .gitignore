@@ -1,0 +1,12 @@
+# We don't need these files and directories on our repository
+__pycache__/
+venv/
+uploads/*
+photostore.db
+
+# To keep my notes local (not to publish to the repository)
+NOTES.md
+TODO.md
+
+# To keep the `./uploads` directory (for the uploads)
+!uploads/.gitkeep

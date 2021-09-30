@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block heading %}
+<div class="profile-container">
+	<div class="profile-username" title="{{ username }}">
+		{{ username }}
+	</div>
+
+	<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
+		<input id="avatarChange" style="display: none;" type=file name="avatar"
+			accept="image/*" onchange="$('#avatarForm').submit()"
+		>
+		<div class="profile-image" onclick="$('#avatarChange').trigger('click')"
+			title="Change avatar"
+		>
+			<img src="{{ url_for('avatar') }}">
+		</div>
+	</form>
+</div>
+
+<div class="profile-navigation-container">
+	<span id="numPhotos">loading...</span>
+
+	<a href="{{ url_for('upload') }}" title="Upload image">
+		<div class="icon-container highlight black">
+			<img src="{{ url_for('static', filename='icons/upload.png') }}">
+		</div>
+	</a>
+</div>
+{% endblock heading %}
+
+{% block content %}
+{% include 'partials/images.html' %}
+{% endblock content %}
