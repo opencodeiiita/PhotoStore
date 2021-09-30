@@ -11,7 +11,13 @@ This project is divided into two branches
   - improvements or additions in frontend and/or backend
 
 ### For Cyber Security
-Please refer to [`main`](https://github.com/opencodeiiita/PhotoStore/tree/main) branch
+Once you have figured out a bug, create a **POC** - Proof Of Concept<br>
+You will be required to provide your **POC** within your **Pull Request**<br>
+Or else it won't be considered for evaluation and you won't be rewarded with any points whatsoever
+
+Given that you would have to go through the code and understand how is it all working<br>
+This project may be a little harder for the beginners<br>
+No worries! During the whole event, some **hints** will be dropped within the respective **Issue**
 
 ### For Web Development
 Please refer to [`dev`](https://github.com/opencodeiiita/PhotoStore/tree/dev) branch
