@@ -1,0 +1,28 @@
+{% if captcha_enabled %}
+<script src="{{ url_for('static', filename='js/captcha.js') }}" type="text/javascript"></script>
+
+<div class="captcha-container">
+	<div class="captcha-box">
+		<label for="captcha_answer">
+			<img id="captcha-image" src="" alt="CAPTCHA" title="It only contains lower case alphabets">
+		</label>
+
+		<div id="captcha-reload" class="icon-container highlight green" title="Reload captcha"
+			onclick="loadCaptcha()"
+		>
+			<img src="{{ url_for('static', filename='icons/re-captcha.png') }}">
+		</div>
+	</div>
+
+	<div class="input-container">
+		<label for="captcha_answer">Captcha</label>
+		<input id="captcha_answer" type=text name="captcha_answer"
+			placeholder="Solve the captcha"
+			title="It only contains lowercase alphabets"
+			required
+		>
+		<input id="captcha-jwt" type=hidden name="captcha_jwt" value="{{ captcha_jwt }}">
+	</div>
+</div>
+
+{% endif %}

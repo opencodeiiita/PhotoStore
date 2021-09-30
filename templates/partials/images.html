@@ -1,0 +1,65 @@
+<script src="{{ url_for('static', filename='js/image.js') }}" type="text/javascript" defer async></script>
+
+<div id="images" class="images-container" value="{{ visibility }}">
+	<template id="image-box-template">
+		<div class="image-box">
+			<img class="image" src="" loading="lazy">
+
+			<div class="image-overlay-container">
+				<div class="image-info-container">
+					<div class="image-meta">
+						<div class="image-owner">
+							{# owner, on top-left #}
+						</div>
+
+						<div class="image-date">
+							{# date, on top-right #}
+						</div>
+					</div>
+
+					<div class="image-description">
+						{# description #}
+					</div>
+				</div>
+
+				<div class="image-likes-container">
+					<div class="image-likes">
+						{# likes #}
+					</div>
+
+					<div class="icon-container highlight blue">
+						<img src="{{ url_for('static', filename='icons/like.png') }}"
+							onclick="likeImage(event)"
+							title="Like/Unlike this image"
+						>
+					</div>
+				</div>
+
+				<div class="image-navigation-container">
+					{# templates got some issue with events, need to clone elements #}
+					{# hmm, I didn't find any issue as mentioned by Mozilla's documentation #}
+
+					<a href="" title="Download this image" download>
+						<div class="icon-container highlight green">
+							<img src="{{ url_for('static', filename='icons/download.png') }}">
+						</div>
+					</a>
+
+					<div class="icon-container highlight red">
+						<img src=""
+							onclick="makeImagePublic(event)"
+							title="Change visibilty to public or private"
+						>
+					</div>
+
+					<div class="icon-container highlight red">
+						<img src="{{ url_for('static', filename='icons/delete.png') }}"
+							onclick="deleteImage(event)"
+							title="Delete this image"
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+	</template>
+</div>

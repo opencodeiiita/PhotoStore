@@ -1,0 +1,30 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+Upload image
+{% endblock title %}
+
+{% block heading %}
+Upload image
+{% endblock heading %}
+
+{% block content %}
+<form method=post enctype=multipart/form-data>
+	<div class="input-container button" title="File size should be under 1MB">
+		<input type=file name="fileToUpload" accept="image/*">
+	</div>
+
+	<div class="input-container">
+		<label for="description">Description</label>
+		<input id="description" type=text name="description"
+			placeholder="Description"
+			title="Provide a nice and short description to your photo"
+			required
+		>
+	</div>
+
+	<div class="input-container button green">
+		<input type=submit value="Upload">
+	</div>
+</form>
+{% endblock content %}
