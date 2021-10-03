@@ -47,7 +47,7 @@ from threading import Lock
 from tinydb import TinyDB, Query
 import tinydb.operations
 
-# for authentication, CAPTCHA, image
+# for authentication, CAPTCHA image
 import bcrypt
 from captcha.image import ImageCaptcha
 
@@ -67,6 +67,7 @@ app.config["CAPTCHA_KEY"] = CAPTCHA_KEY
 app.config["CAPTCHA_EXPIRE_SECONDS"] = 5 * 60  # 5 minutes
 app.config["MAX_CONTENT_LENGTH"] = 1 * 1000 * 1000  # 1MB limit
 app.config["DATABASE"] = "photostore.db"
+app.config["USE_CAPTCHA"] = False
 
 # for CAPTCHA
 captcha = ImageCaptcha()
@@ -139,6 +140,9 @@ def generateCaptcha():
 
 def verifyCaptcha(captcha_answer, token):
     captcha_result = {"valid": False, "expired": False}
+
+    if not captcha_answer:
+        return captcha_result
 
     jwtData = {}
 
@@ -277,10 +281,7 @@ def api_image_info(id):
         "liked": username and username in image.get("likes"),
     }
 
-    if public:
-        return jsonify(info)
-
-    if owner == username:
+    if public or owner == username:
         return jsonify(info)
 
     return json.dumps(None), 403
@@ -319,7 +320,7 @@ def api_image_delete():
     if owner == username:
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
-        if filename and os.path.isfile(filepath):
+        if os.path.isfile(filepath):
             os.remove(filepath)
 
             with dbLock:
@@ -557,9 +558,6 @@ def signup():
         password = request.form.get("password")
         cpassword = request.form.get("cpassword")
 
-        captcha_answer = request.form.get("captcha_answer")
-        captcha_jwt = request.form.get("captcha_jwt")
-
         if not username:
             flash("Username cannot be empty!", "error")
             return redirect(request.url)
@@ -587,15 +585,19 @@ def signup():
             flash("Passwords are not same!", "error")
             return redirect(request.url)
 
-        captcha_result = verifyCaptcha(captcha_answer, captcha_jwt)
+        if app.config["USE_CAPTCHA"]:
+            captcha_answer = request.form.get("captcha_answer")
+            captcha_jwt = request.form.get("captcha_jwt")
 
-        if captcha_result["expired"]:
-            flash("CAPTCHA has expired!", "error")
-            return redirect(request.url)
+            captcha_result = verifyCaptcha(captcha_answer, captcha_jwt)
 
-        if not captcha_result["valid"]:
-            flash("CAPTCHA error!", "error")
-            return redirect(request.url)
+            if captcha_result["expired"]:
+                flash("CAPTCHA has expired!", "error")
+                return redirect(request.url)
+
+            if not captcha_result["valid"]:
+                flash("CAPTCHA error!", "error")
+                return redirect(request.url)
 
         newUser = True
 
@@ -631,7 +633,7 @@ def signup():
         resp.set_cookie("jwt", encodeToJWT({"username": username}))
         return resp
 
-    return render_template("signup.html", captcha_enabled=True)
+    return render_template("signup.html", captcha_enabled=app.config["USE_CAPTCHA"])
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -643,9 +645,6 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        captcha_answer = request.form.get("captcha_answer")
-        captcha_jwt = request.form.get("captcha_jwt")
-
         if not username:
             flash("Username cannot be empty!", "error")
             return redirect(request.url)
@@ -654,15 +653,19 @@ def login():
             flash("Password cannot be empty!", "error")
             return redirect(request.url)
 
-        captcha_result = verifyCaptcha(captcha_answer, captcha_jwt)
+        if app.config["USE_CAPTCHA"]:
+            captcha_answer = request.form.get("captcha_answer")
+            captcha_jwt = request.form.get("captcha_jwt")
 
-        if captcha_result["expired"]:
-            flash("CAPTCHA has expired!", "error")
-            return redirect(request.url)
+            captcha_result = verifyCaptcha(captcha_answer, captcha_jwt)
 
-        if not captcha_result["valid"]:
-            flash("CAPTCHA error!", "error")
-            return redirect(request.url)
+            if captcha_result["expired"]:
+                flash("CAPTCHA has expired!", "error")
+                return redirect(request.url)
+
+            if not captcha_result["valid"]:
+                flash("CAPTCHA error!", "error")
+                return redirect(request.url)
 
         userExists = False
         validCredentials = False
@@ -691,7 +694,7 @@ def login():
         else:
             flash("This user does not exist!", "error")
 
-    return render_template("login.html", captcha_enabled=True)
+    return render_template("login.html", captcha_enabled=app.config["USE_CAPTCHA"])
 
 
 @app.route("/logout")
