@@ -1,3 +1,5 @@
 ## Contributors
 
-1. diyawaghmare
+Palak-2109
+diyawaghmare
+
