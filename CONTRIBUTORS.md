@@ -24,5 +24,6 @@
 - srishtayy
 - batflarrow
 - monik09
+- krypton001
 - rajpranav63
 - Tanushree-coder
