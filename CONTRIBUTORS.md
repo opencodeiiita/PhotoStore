@@ -1,4 +1,5 @@
 ## Contributors
+
 - souvenger
 - Palak-2109
 - criticic
@@ -21,3 +22,5 @@
 - shlesh
 - Ksathwik03
 - batflarrow
+- prxtikk-18
+- srishtayy
