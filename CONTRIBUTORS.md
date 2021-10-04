@@ -1,2 +1,2 @@
 ## Contributors
-cynik
+criticic
