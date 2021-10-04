@@ -1,2 +1,3 @@
 ## Contributors
-Palak-2109
+- Palak-2109
+- adtoria
