@@ -5,5 +5,4 @@
 - diyawaghmare
 - adtoria
 - Aneesh02
-- devmrfitz
 - medhatiwari
