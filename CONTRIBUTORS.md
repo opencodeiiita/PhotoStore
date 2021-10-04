@@ -1,2 +1,2 @@
 ## Contributors
-# [Kirti Singla](https://github.com/codesanta142)
+### [Kirti Singla](https://github.com/codesanta142)
