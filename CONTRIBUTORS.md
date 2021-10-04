@@ -1,4 +1,5 @@
 ## Contributors
+- souvenger
 - Palak-2109
 - criticic
 - raghavgoel25
@@ -6,4 +7,6 @@
 - adtoria
 - Aneesh02
 - medhatiwari
+- devmrfitz
+- Tushargupta9800
 - AshokMalhotra23
