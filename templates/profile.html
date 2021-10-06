@@ -23,6 +23,7 @@ Profile
 </div>
 
 <div class="profile-navigation-container">
+
 	<div class="profile-upload-info">
 		<span id="numPhotos">loading...</span>
 		<a href="{{ url_for('upload') }}" title="Upload image">
@@ -41,6 +42,14 @@ Profile
 			<img class="icon-container" src="{{ url_for('static', filename='icons/like.png') }}">
 		</div>
 	</div>
+	<span id="numPhotos">loading...</span>
+
+	<a href="{{ url_for('upload') }}" title="Upload image">
+		<div class="icon-container highlight black">
+			<img src="{{ url_for('static', filename='icons/upload.png') }}">
+		</div>
+	</a>
+
 </div>
 {% endblock heading %}
 

@@ -10,5 +10,8 @@ TODO.md
 
 # To keep the `./uploads` directory (for the uploads)
 !uploads/.gitkeep
+<<<<<<< HEAD
 
 **/.DS_Store
+=======
+>>>>>>> 8dee5105ba95bfec062547891bebebec7e983b3d

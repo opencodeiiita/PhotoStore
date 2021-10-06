@@ -20,7 +20,14 @@ This project may be a little harder for the beginners<br>
 No worries! During the whole event, some **hints** will be dropped within the respective **Issue**
 
 ### For Web Development
-Please refer to [`dev`](https://github.com/opencodeiiita/PhotoStore/tree/dev) branch
+Other than the issues provided in [Issues](https://github.com/opencodeiiita/PhotoStore/issues)<br>
+You are **not restricted** from adding your own features<br>
+However, it is upto the organizers and/or mentors whether to reward points for it or not<br>
+
+For any new feature that you come up with<br>
+please attach screenshots with _proper details_ in your Pull request
+
+It will make it easier for the mentors to get to know about feature
 
 ## Requirements
 - Basic understanding of backend and frontend

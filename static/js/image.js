@@ -28,6 +28,12 @@ function loadImages() {
 				profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
 			}
 
+			var profileNavInfo = document.querySelector('#numPhotos');
+
+			if (profileNavInfo) {
+				var numPhotos = images.length;
+				profileNavInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+			}
 		}
 	};
 
@@ -205,7 +211,9 @@ function likeImage(event) {
 			if (xhr.status == 200) {
 				var json = JSON.parse(xhr.responseText);
 				likeButton.setAttribute('liked', value);
+
 				document.getElementById('numLikes').innerHTML=json.tlikes;
+
 
 				if (value)
 					likeButton.classList.add('dislike');
@@ -248,10 +256,13 @@ function deleteImage(event) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			if (xhr.status == 200) {
+
 				var json=JSON.parse(xhr.responseText);
 				imageBox.remove();
 				document.getElementById('numLikes').innerHTML=json.tlikes;
 				document.getElementById('numViews').innerHTML=json.tviews;
+				imageBox.remove();
+
 
 				var images = document.getElementById('images');
 				var type = images.getAttribute('value');

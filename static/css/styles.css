@@ -308,6 +308,7 @@ a.underline:hover:after {
 .profile-info{
 	display: flex;
 	flex-direction: row;
+
 	align-items: center;
 	justify-content: center;
 	gap: 0.4em;
@@ -322,6 +323,8 @@ a.underline:hover:after {
 	font-size: 2.5em;
 	padding-right: 1em;
 }
+
+
 
 .input-container {
 	display: flex;
@@ -646,7 +649,6 @@ a.underline:hover:after {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-
 .image-likes-container {
 	position: absolute;
 

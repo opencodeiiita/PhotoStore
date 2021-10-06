@@ -230,6 +230,7 @@ def api_image_get(id):
             if image is not None:
                 images.update(tinydb.operations.increment("views"), doc_ids=[id])
 
+
     if not image:
         return "", 404
 
@@ -336,6 +337,7 @@ def api_image_delete():
 
                     images = db.table("images")
                     image = images.remove(doc_ids=[id])
+
                     imagelist = images.search(Query().owner == username)
 
                     tlikes = 0
@@ -345,6 +347,10 @@ def api_image_delete():
                         tviews += image.get("views")
 
             return json.dumps({"tviews": tviews, "tlikes": tlikes}), 200
+
+
+            return json.dumps(True), 200
+
         else:
             return json.dumps(None), 404
 
@@ -437,12 +443,17 @@ def api_image_like():
                 likes.remove(username)
 
             images.update(tinydb.operations.set("likes", likes), doc_ids=[id])
+
             imagelist = images.search(Query().owner == username)
             tlikes = 0
             for image in imagelist:
                 tlikes += len(image.get("likes"))
 
             return json.dumps({"likes": len(likes), "tlikes": tlikes}), 200
+
+
+            return json.dumps({"likes": len(likes)}), 200
+
 
     return json.dumps(False), 403
 
@@ -746,6 +757,7 @@ def profile():
                     tlikes += len(image.get("likes"))
                     tviews += image.get("views")
 
+
     return render_template(
         "profile.html",
         username=username,
@@ -789,6 +801,7 @@ def api_user_info(username):
     }
 
     return jsonify(info)
+
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -850,7 +863,13 @@ def upload():
 
                     if allowed_file(file.filename):
                         timestamp = time.time()
+
                         timestamp_hash = md5(str(timestamp).encode("utf-8")).hexdigest()
+
+                        timestamp_hash = md5(
+                            str(timestamp).encode("utf-8")
+                        ).hexdigest()
+
 
                         filename = f"{username}-{timestamp_hash}.{ext}"
                         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -864,6 +883,7 @@ def upload():
                             "description": description,
                             "likes": [],
                             "views": 0,
+
                         }
 
                         with dbLock:
