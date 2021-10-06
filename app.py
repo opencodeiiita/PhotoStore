@@ -243,7 +243,7 @@ def api_image_get(id):
     if not filename:
         return "", 404
 
-    if not owner == username or not public:
+    if not owner == username and not public:
         return "", 403
 
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
