@@ -228,6 +228,13 @@ def api_image_get(id):
             images = db.table("images")
             image = images.get(doc_id=id)
 
+    public = image.get("public")
+    owner = image.get("owner")
+
+    token = request.cookies.get("jwt")
+    jwtData = decodeFromJWT(token)
+    username = jwtData.get("username")
+
     if not image:
         return "", 404
 
@@ -235,6 +242,9 @@ def api_image_get(id):
 
     if not filename:
         return "", 404
+
+    if not owner == username and not public:
+        return "", 403
 
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
