@@ -33,3 +33,4 @@
 - saloni33
 - sauhard22
 - isharawat
+- osho-20
