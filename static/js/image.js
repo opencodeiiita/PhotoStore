@@ -21,11 +21,11 @@ function loadImages() {
 				createImage(id, type == 'private');
 			});
 
-			var profileNavInfo = document.querySelector('#numPhotos');
+			var profileUploadInfo = document.querySelector('#numPhotos');
 
-			if (profileNavInfo) {
+			if (profileUploadInfo) {
 				var numPhotos = images.length;
-				profileNavInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+				profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
 			}
 		}
 	};
@@ -76,15 +76,23 @@ function createImage(id, viewingProfile) {
 			imageDescription.innerHTML = info.description;
 			imageDescription.setAttribute('title', info.description);
 
+			var imageViewsContainer = imageBox.querySelector('.image-views-container');
+			var imageViews = imageViewsContainer.querySelector('.image-views');
+			imageViews.innerHTML = info.views + 1; // because we will be viewing it now
+
+			var numViews = document.getElementById('numViews');
+			if (numViews)
+				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
+
 			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			var imageLikes = imageLikesContainer.querySelector('.image-likes'),
-			imageLikeImage = imageLikesContainer.querySelector('.icon-container');
+			imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
 
 			imageLikes.innerHTML = info.likes;
-			imageLikeImage.setAttribute('liked', info.liked);
+			imageLikeIcon.setAttribute('liked', info.liked);
 
 			if (info.liked)
-				imageLikeImage.classList.add('dislike');
+				imageLikeIcon.classList.add('dislike');
 
 			var imageNav = imageBox.querySelector('.image-navigation-container');
 			var imageNavButtons = imageNav.querySelectorAll('.icon-container');
@@ -198,6 +206,11 @@ function likeImage(event) {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			if (xhr.status == 200) {
 				var json = JSON.parse(xhr.responseText);
+
+                                var numLikes = 	document.getElementById('numLikes');
+				if (numLikes)
+					numLikes.innerHTML = json.totalLikes;
+
 				likeButton.setAttribute('liked', value);
 
 				if (value)
@@ -241,6 +254,11 @@ function deleteImage(event) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			if (xhr.status == 200) {
+				var json = JSON.parse(xhr.responseText);
+
+				document.getElementById('numLikes').innerHTML = json.totalLikes;
+				document.getElementById('numViews').innerHTML = json.totalViews;
+
 				imageBox.remove();
 
 				var images = document.getElementById('images');

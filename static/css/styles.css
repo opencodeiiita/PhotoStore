@@ -273,7 +273,7 @@ a.underline:hover:after {
 }
 
 .profile-image {
-	width: 2em;
+	width: 1.6em;
 	border: 0.1em grey solid;
 	border-radius: 2em;
 	padding: 0.1em;
@@ -292,10 +292,38 @@ a.underline:hover:after {
 
 .profile-navigation-container {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 0.4em;
 	font-size: 0.4em;
+}
+
+.profile-upload-info {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4em;
+}
+
+.profile-meta-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4em;
+	font-size: 0.4em;
+}
+
+.profile-meta {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4em;
+	font-size: 2.5em;
+	padding: 0 2em;
 }
 
 .input-container {
@@ -588,6 +616,7 @@ a.underline:hover:after {
 	text-overflow: ellipsis;
 }
 
+.image-views-container,
 .image-likes-container {
 	position: absolute;
 
@@ -603,8 +632,6 @@ a.underline:hover:after {
 	height: 20%;
 	padding: 0.4em;
 
-	border-radius: 0.4em 0 0 0.4em;
-	right: 0;
 	top: 0;
 	bottom: 0;
 
@@ -613,6 +640,23 @@ a.underline:hover:after {
 
 	background-color: var(--image-overlay-box-bg-color);
 	color: var(--image-overlay-box-text-color);
+}
+
+.image-views-container {
+	border-radius: 0 0.4em 0.4em 0;
+	left: 0;
+}
+
+.image-likes-container {
+	border-radius: 0.4em 0 0 0.4em;
+	right: 0;
+}
+
+.image-views {
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .image-likes {
