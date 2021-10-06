@@ -24,6 +24,13 @@
 - srishtayy
 - batflarrow
 - monik09
+- krypton001
 - rajpranav63
 - Tanushree-coder
+- Darkknight131714
+- anshrusia200
+- rajraman786
+- saloni33
+- sauhard22
+- isharawat
 - codelord09
