@@ -223,25 +223,26 @@ def api_image_get(id):
     if not id:
         return "", 404
 
+    image = None
+
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
             images = db.table("images")
             image = images.get(doc_id=id)
 
-    public = image.get("public")
-    owner = image.get("owner")
-
-    token = request.cookies.get("jwt")
-    jwtData = decodeFromJWT(token)
-    username = jwtData.get("username")
-
     if not image:
         return "", 404
 
+    public = image.get("public")
+    owner = image.get("owner")
     filename = image.get("filename")
 
     if not filename:
         return "", 404
+
+    token = request.cookies.get("jwt")
+    jwtData = decodeFromJWT(token)
+    username = jwtData.get("username")
 
     if not owner == username and not public:
         return "", 403
