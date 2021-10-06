@@ -234,7 +234,7 @@ def api_image_get(id):
     token = request.cookies.get("jwt")
     jwtData = decodeFromJWT(token)
     username = jwtData.get("username")
-    
+
     if not image:
         return "", 404
 
