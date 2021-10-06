@@ -23,13 +23,24 @@ Profile
 </div>
 
 <div class="profile-navigation-container">
-	<span id="numPhotos">loading...</span>
-
-	<a href="{{ url_for('upload') }}" title="Upload image">
-		<div class="icon-container highlight black">
-			<img src="{{ url_for('static', filename='icons/upload.png') }}">
+	<div class="profile-upload-info">
+		<span id="numPhotos">loading...</span>
+		<a href="{{ url_for('upload') }}" title="Upload image">
+			<div class="icon-container highlight black">
+				<img src="{{ url_for('static', filename='icons/upload.png') }}">
+			</div>
+		</a>
+	</div>
+	<div class="profile-info">
+		<div class="picture-info">
+			<span id="numViews">{{tviews}}</span>
+			<img  class="icon-container" src="{{ url_for('static', filename='icons/views.png') }}">
 		</div>
-	</a>
+		<div class="picture-info">
+			<span id="numLikes">{{tlikes}}</span>
+			<img class="icon-container" src="{{ url_for('static', filename='icons/like.png') }}">
+		</div>
+	</div>
 </div>
 {% endblock heading %}
 

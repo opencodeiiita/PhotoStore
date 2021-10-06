@@ -21,12 +21,13 @@ function loadImages() {
 				createImage(id, type == 'private');
 			});
 
-			var profileNavInfo = document.querySelector('#numPhotos');
+			var profileUploadInfo = document.querySelector('#numPhotos');
 
-			if (profileNavInfo) {
+			if (profileUploadInfo) {
 				var numPhotos = images.length;
-				profileNavInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+				profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
 			}
+
 		}
 	};
 
@@ -75,6 +76,11 @@ function createImage(id, viewingProfile) {
 			var imageDescription = imageBox.querySelector('.image-description');
 			imageDescription.innerHTML = info.description;
 			imageDescription.setAttribute('title', info.description);
+
+			var imageViewsContainer = imageBox.querySelector('.image-views-container');
+			var imageViews = imageViewsContainer.querySelector('.image-views');
+
+			imageViews.innerHTML = info.views;
 
 			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			var imageLikes = imageLikesContainer.querySelector('.image-likes'),
@@ -199,6 +205,7 @@ function likeImage(event) {
 			if (xhr.status == 200) {
 				var json = JSON.parse(xhr.responseText);
 				likeButton.setAttribute('liked', value);
+				document.getElementById('numLikes').innerHTML=json.tlikes;
 
 				if (value)
 					likeButton.classList.add('dislike');
@@ -241,7 +248,10 @@ function deleteImage(event) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			if (xhr.status == 200) {
+				var json=JSON.parse(xhr.responseText);
 				imageBox.remove();
+				document.getElementById('numLikes').innerHTML=json.tlikes;
+				document.getElementById('numViews').innerHTML=json.tviews;
 
 				var images = document.getElementById('images');
 				var type = images.getAttribute('value');

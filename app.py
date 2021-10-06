@@ -227,6 +227,8 @@ def api_image_get(id):
         with TinyDB(app.config["DATABASE"]) as db:
             images = db.table("images")
             image = images.get(doc_id=id)
+            if image is not None:
+                images.update(tinydb.operations.increment("views"), doc_ids=[id])
 
     if not image:
         return "", 404
@@ -279,6 +281,7 @@ def api_image_info(id):
         "public": public,
         "likes": len(image.get("likes")),
         "liked": username and username in image.get("likes"),
+        "views": image.get("views"),
     }
 
     if public or owner == username:
@@ -333,8 +336,15 @@ def api_image_delete():
 
                     images = db.table("images")
                     image = images.remove(doc_ids=[id])
+                    imagelist = images.search(Query().owner == username)
 
-            return json.dumps(True), 200
+                    tlikes = 0
+                    tviews = 0
+                    for image in imagelist:
+                        tlikes += len(image.get("likes"))
+                        tviews += image.get("views")
+
+            return json.dumps({"tviews": tviews, "tlikes": tlikes}), 200
         else:
             return json.dumps(None), 404
 
@@ -427,8 +437,12 @@ def api_image_like():
                 likes.remove(username)
 
             images.update(tinydb.operations.set("likes", likes), doc_ids=[id])
+            imagelist = images.search(Query().owner == username)
+            tlikes = 0
+            for image in imagelist:
+                tlikes += len(image.get("likes"))
 
-            return json.dumps({"likes": len(likes)}), 200
+            return json.dumps({"likes": len(likes), "tlikes": tlikes}), 200
 
     return json.dumps(False), 403
 
@@ -716,6 +730,8 @@ def profile():
 
     username = jwtData.get("username")
     uploads = 0
+    tlikes = 0
+    tviews = 0
 
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
@@ -724,14 +740,55 @@ def profile():
 
             if account:
                 uploads = account.get("uploads", 0)
+                images = db.table("images")
+                imagelist = images.search(Query().owner == username)
+                for image in imagelist:
+                    tlikes += len(image.get("likes"))
+                    tviews += image.get("views")
 
     return render_template(
         "profile.html",
         username=username,
         uploads=uploads,
+        tlikes=tlikes,
+        tviews=tviews,
         visibility="private",
         loggedIn=True,
     )
+
+
+@app.route("/api/user/info/<username>")
+def api_user_info(username):
+
+    uploads = 0
+    tlikes = 0
+    tviews = 0
+
+    account = None
+    with dbLock:
+        with TinyDB(app.config["DATABASE"]) as db:
+            accounts = db.table("accounts")
+            account = accounts.get(Query().username == username)
+
+            if account:
+                uploads = account.get("uploads", 0)
+                images = db.table("images")
+                imagelist = images.search(Query().owner == username)
+                for image in imagelist:
+                    tlikes += len(image.get("likes"))
+                    tviews += image.get("views")
+
+    if not account:
+        return json.dumps(None), 404
+
+    info = {
+        "date": str(datetime.fromtimestamp(account.get("timestamp"))),
+        "username": username,
+        "likes": tlikes,
+        "views": tviews,
+    }
+
+    return jsonify(info)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -793,9 +850,7 @@ def upload():
 
                     if allowed_file(file.filename):
                         timestamp = time.time()
-                        timestamp_hash = md5(
-                            str(timestamp).encode("utf-8")
-                        ).hexdigest()
+                        timestamp_hash = md5(str(timestamp).encode("utf-8")).hexdigest()
 
                         filename = f"{username}-{timestamp_hash}.{ext}"
                         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -808,6 +863,7 @@ def upload():
                             "public": False,
                             "description": description,
                             "likes": [],
+                            "views": 0,
                         }
 
                         with dbLock:
