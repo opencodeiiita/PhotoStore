@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
-
+from markupsafe import escape
 # for HTTP server, web application
 import json
 from flask import (
@@ -763,7 +763,7 @@ def upload():
     if request.method == "POST":
         # the error will be triggered when we first access the `resquest` object
         try:
-            description = request.form.get("description", "")
+            description = escape(request.form.get("description", ""))
             file = None
 
             if "fileToUpload" in request.files:
