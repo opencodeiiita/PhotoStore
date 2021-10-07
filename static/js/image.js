@@ -156,7 +156,6 @@ function makeImagePublic(event) {
 			if (xhr.status == 200) {
 				imageBox.setAttribute('visibility', value);
 				img.src = `/static/icons/${value}.png`;
-				console.log(img);
 			}
 			else
 			if (xhr.status == 403)

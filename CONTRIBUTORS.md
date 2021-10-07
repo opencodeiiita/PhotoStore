@@ -39,4 +39,6 @@
 - codelord09
 - shaliniagrawal2512
 - underoot-iota
+- naman-cr
+- j-e-e-t
 - rahulsingh-20
