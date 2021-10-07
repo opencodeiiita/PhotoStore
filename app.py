@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
-from markupsafe import escape
+
 # for HTTP server, web application
 import json
 from flask import (
@@ -37,6 +37,7 @@ from flask_pretty import Prettify
 
 # to sanitize input
 import re
+from markupsafe import escape
 
 # for session tokens
 import jwt
@@ -763,6 +764,9 @@ def upload():
     if request.method == "POST":
         # the error will be triggered when we first access the `resquest` object
         try:
+            # this prevents HTML code from being stored
+            # directly into the database
+            # thus preventing stored XSS vulnerability
             description = escape(request.form.get("description", ""))
             file = None
 
