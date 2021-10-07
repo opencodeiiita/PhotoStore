@@ -131,16 +131,16 @@ function sortImages() {
 }
 
 function makeImagePublic(event) {
-	var imageBox = event.path[4];
+	var imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
 	var id = imageBox.getAttribute('image_id');
 
 	// the user might have clicked on the `div`
-	// and we are using `event.path` to manipulate data
+	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
 	// so `id` can be `null`
 	if (!id)
 		return;
 
-	var img = event.path[0];
+	var img = (event.path || (event.composedPath && event.composedPath()))[0];
 	var value = imageBox.getAttribute('visibility') == 'public' ? 'private' : 'public';
 
 	let json = JSON.stringify({
@@ -156,7 +156,6 @@ function makeImagePublic(event) {
 			if (xhr.status == 200) {
 				imageBox.setAttribute('visibility', value);
 				img.src = `/static/icons/${value}.png`;
-				console.log(img);
 			}
 			else
 			if (xhr.status == 403)
@@ -173,17 +172,17 @@ function makeImagePublic(event) {
 }
 
 function likeImage(event) {
-	var imageBox = event.path[4];
+	var imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
 	var id = imageBox.getAttribute('image_id');
 
 	// the user might have clicked on the `div`
-	// and we are using `event.path` to manipulate data
+	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
 	// so `id` can be `null`
 	if (!id)
 		return;
 
-	var likeButton = event.path[1];
-	var likes = event.path[2].children[0];
+	var likeButton = (event.path || (event.composedPath && event.composedPath()))[1];
+	var likes = (event.path || (event.composedPath && event.composedPath()))[2].children[0];
 	var value = !(likeButton.getAttribute('liked') == 'true');
 
 	let json = JSON.stringify({
@@ -222,11 +221,11 @@ function likeImage(event) {
 }
 
 function deleteImage(event) {
-	var imageBox = event.path[4];
+	var imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
 	var id = imageBox.getAttribute('image_id');
 
 	// the user might have clicked on the `div`
-	// and we are using `event.path` to manipulate data
+	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
 	// so `id` can be `null`
 	if (!id)
 		return;
