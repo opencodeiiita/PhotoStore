@@ -255,8 +255,13 @@ function deleteImage(event) {
 			if (xhr.status == 200) {
 				var json = JSON.parse(xhr.responseText);
 
-				document.getElementById('numLikes').innerHTML = json.totalLikes;
-				document.getElementById('numViews').innerHTML = json.totalViews;
+				var numLikes = document.getElementById('numLikes');
+				if (numLikes)
+					numLikes.innerHTML = json.totalLikes;
+
+				var numViews = document.getElementById('numViews');
+				if (numViews)
+					numViews.innerHTML = json.totalViews;
 
 				imageBox.remove();
 
