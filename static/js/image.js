@@ -207,7 +207,7 @@ function likeImage(event) {
 			if (xhr.status == 200) {
 				var json = JSON.parse(xhr.responseText);
 
-                                var numLikes = 	document.getElementById('numLikes');
+				var numLikes = document.getElementById('numLikes');
 				if (numLikes)
 					numLikes.innerHTML = json.totalLikes;
 
