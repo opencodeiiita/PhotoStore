@@ -228,6 +228,9 @@ def api_image_get(id):
             images = db.table("images")
             image = images.get(doc_id=id)
 
+            if image:
+                images.update(tinydb.operations.increment("views"), doc_ids=[id])
+
     if not image:
         return "", 404
 
@@ -279,6 +282,7 @@ def api_image_info(id):
         "public": public,
         "likes": len(image.get("likes")),
         "liked": username and username in image.get("likes"),
+        "views": image.get("views")
     }
 
     if public or owner == username:
@@ -334,7 +338,14 @@ def api_image_delete():
                     images = db.table("images")
                     image = images.remove(doc_ids=[id])
 
-            return json.dumps(True), 200
+                    imageList = images.search(Query().owner == username)
+                    totalLikes = totalViews = 0
+
+                    for image in imageList:
+                        totalLikes += len(image.get("likes"))
+                        totalViews += image.get("views")
+
+            return json.dumps({ "totalLikes": totalLikes, "totalViews": totalViews}), 200
         else:
             return json.dumps(None), 404
 
@@ -428,7 +439,13 @@ def api_image_like():
 
             images.update(tinydb.operations.set("likes", likes), doc_ids=[id])
 
-            return json.dumps({"likes": len(likes)}), 200
+            imageList = images.search(Query().owner == username)
+            totalLikes = 0
+
+            for image in imageList:
+                totalLikes += len(image.get("likes"))
+
+            return json.dumps({"likes": len(likes), "totalLikes": totalLikes}), 200
 
     return json.dumps(False), 403
 
@@ -716,6 +733,7 @@ def profile():
 
     username = jwtData.get("username")
     uploads = 0
+    totalLikes = totalViews = 0
 
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
@@ -725,13 +743,58 @@ def profile():
             if account:
                 uploads = account.get("uploads", 0)
 
+                images = db.table("images")
+                imageList = images.search(Query().owner == username)
+
+                for image in imageList:
+                    totalLikes += len(image.get("likes"))
+                    totalViews += image.get("views")
+
     return render_template(
         "profile.html",
         username=username,
         uploads=uploads,
+        totalLikes=totalLikes,
+        totalViews=totalViews,
         visibility="private",
         loggedIn=True,
     )
+
+
+@app.route("/api/user/info/<username>")
+def api_user_info(username):
+    uploads = 0
+    totalLikes = 0
+    totalViews = 0
+
+    account = None
+
+    with dbLock:
+        with TinyDB(app.config["DATABASE"]) as db:
+            accounts = db.table("accounts")
+            account = accounts.get(Query().username == username)
+
+            if account:
+                uploads = account.get("uploads", 0)
+
+                images = db.table("images")
+                imageList = images.search(Query().owner == username)
+
+                for image in imagelist:
+                    totalLikes += len(image.get("likes"))
+                    totalViews += image.get("views")
+
+    if not account:
+        return json.dumps(None), 404
+
+    info = {
+        "date": str(datetime.fromtimestamp(account.get("timestamp"))),
+        "username": username,
+        "likes": totalLikes,
+        "views": totalViews,
+    }
+
+    return jsonify(info)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -808,6 +871,7 @@ def upload():
                             "public": False,
                             "description": description,
                             "likes": [],
+                            "views": 0
                         }
 
                         with dbLock:
