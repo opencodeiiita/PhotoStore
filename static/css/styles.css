@@ -1,6 +1,7 @@
 :root {
 	--hf-height: 3.2rem;
 	--icon-size: 2.4em;
+	--avatar-size: 1.6em;
 	--image-size: 18em;
 	--accent-color: #f55;
 	--box-bg-color: #1f1f1f;
@@ -228,7 +229,6 @@ a.underline:hover:after {
 
 .wobbly-image-box img {
 	display: block;
-	vertical-align: center;
 }
 
 .content-container {
@@ -273,7 +273,9 @@ a.underline:hover:after {
 }
 
 .profile-image {
-	width: 1.6em;
+	display: flex;
+	width: var(--avatar-size);
+	height: var(--avatar-size);
 	border: 0.1em grey solid;
 	border-radius: 2em;
 	padding: 0.1em;
@@ -543,7 +545,6 @@ a.underline:hover:after {
 	position: absolute;
 	opacity: 0;
 	display: block;
-	vertical-align: middle;
 	transition: opacity var(--transition-duration);
 	max-height: 100%;
 	border-radius: 0.4em;
