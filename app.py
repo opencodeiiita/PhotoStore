@@ -780,7 +780,7 @@ def api_user_info(username):
                 images = db.table("images")
                 imageList = images.search(Query().owner == username)
 
-                for image in imagelist:
+                for image in imageList:
                     totalLikes += len(image.get("likes"))
                     totalViews += image.get("views")
 
