@@ -60,8 +60,12 @@ CWD = Path(os.path.dirname(__file__))
 UPLOAD_FOLDER = CWD / "uploads"
 ALLOWED_EXTENSIONS = {"jpg", "png", "svg", "jpeg"}
 
+# use google's flask-talisman library for sane default headers
+from flask_talisman import Talisman
+
 # flask app
 app = Flask(__name__)
+Talisman(app, force_https=False)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["SECRET_KEY"] = SECRET_KEY
 app.config["CAPTCHA_KEY"] = CAPTCHA_KEY
