@@ -62,6 +62,7 @@ ALLOWED_EXTENSIONS = {"jpg", "png", "svg", "jpeg"}
 
 # flask app
 app = Flask(__name__)
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["SECRET_KEY"] = SECRET_KEY
 app.config["CAPTCHA_KEY"] = CAPTCHA_KEY
@@ -250,10 +251,11 @@ def api_image_get(id):
 
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
-    if os.path.isfile(filepath):
-        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
-
-    return "", 404
+    if not os.path.isfile(filepath):
+        return "", 404
+    resp = make_response(send_from_directory(app.config["UPLOAD_FOLDER"], filename))
+    resp.headers['Content-Security-Policy'] = "default-src 'self'"
+    return resp
 
 
 @app.route("/api/image/info/<id>")
