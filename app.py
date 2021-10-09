@@ -254,7 +254,7 @@ def api_image_get(id):
     if not os.path.isfile(filepath):
         return "", 404
     resp = make_response(send_from_directory(app.config["UPLOAD_FOLDER"], filename))
-    resp.headers['Content-Security-Policy'] = "default-src 'self'"
+    resp.headers["Content-Security-Policy"] = "default-src 'self'"
     return resp
 
 
@@ -810,9 +810,7 @@ def upload():
 
                     if allowed_file(file.filename):
                         timestamp = time.time()
-                        timestamp_hash = md5(
-                            str(timestamp).encode("utf-8")
-                        ).hexdigest()
+                        timestamp_hash = md5(str(timestamp).encode("utf-8")).hexdigest()
 
                         filename = f"{username}-{timestamp_hash}.{ext}"
                         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
