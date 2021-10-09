@@ -215,11 +215,6 @@ def api_image_list():
 
 @app.route("/api/image/get/<id>")
 def api_image_get(id):
-
-    token = request.cookies.get("jwt")
-    jwtData = decodeFromJWT(token)
-    username = jwtData.get("username")
-
     try:
         id = int(id)
     except ValueError:
@@ -228,13 +223,21 @@ def api_image_get(id):
     if not id:
         return "", 404
 
+    token = request.cookies.get("jwt")
+    jwtData = decodeFromJWT(token)
+    username = jwtData.get("username")
+
+    if not username:
+        return "", 403
+
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
             images = db.table("images")
             image = images.get(doc_id=id)
 
-            if image and username:
+            if image:
                 views = image.get("views")
+
                 if username not in views:
                     views.append(username)
                     images.update(tinydb.operations.set("views",views), doc_ids=[id])
