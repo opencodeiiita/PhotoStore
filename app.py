@@ -37,6 +37,7 @@ from flask_pretty import Prettify
 
 # to sanitize input
 import re
+from markupsafe import escape
 
 # for session tokens
 import jwt
@@ -61,6 +62,7 @@ ALLOWED_EXTENSIONS = {"jpg", "png", "svg", "jpeg"}
 
 # flask app
 app = Flask(__name__)
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["SECRET_KEY"] = SECRET_KEY
 app.config["CAPTCHA_KEY"] = CAPTCHA_KEY
@@ -223,28 +225,37 @@ def api_image_get(id):
     if not id:
         return "", 404
 
+    image = None
+
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
             images = db.table("images")
             image = images.get(doc_id=id)
 
-            if image:
-                images.update(tinydb.operations.increment("views"), doc_ids=[id])
-
     if not image:
         return "", 404
 
+    public = image.get("public")
+    owner = image.get("owner")
     filename = image.get("filename")
 
     if not filename:
         return "", 404
 
+    token = request.cookies.get("jwt")
+    jwtData = decodeFromJWT(token)
+    username = jwtData.get("username")
+
+    if not owner == username and not public:
+        return "", 403
+
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
-    if os.path.isfile(filepath):
-        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
-
-    return "", 404
+    if not os.path.isfile(filepath):
+        return "", 404
+    resp = make_response(send_from_directory(app.config["UPLOAD_FOLDER"], filename))
+    resp.headers["Content-Security-Policy"] = "default-src 'self'"
+    return resp
 
 
 @app.route("/api/image/info/<id>")
@@ -281,8 +292,8 @@ def api_image_info(id):
         "description": image.get("description"),
         "public": public,
         "likes": len(image.get("likes")),
+        "who_liked": image.get("likes"),
         "liked": username and username in image.get("likes"),
-        "views": image.get("views"),
     }
 
     if public or owner == username:
@@ -338,14 +349,7 @@ def api_image_delete():
                     images = db.table("images")
                     image = images.remove(doc_ids=[id])
 
-                    imageList = images.search(Query().owner == username)
-                    totalLikes = totalViews = 0
-
-                    for image in imageList:
-                        totalLikes += len(image.get("likes"))
-                        totalViews += image.get("views")
-
-            return json.dumps({"totalLikes": totalLikes, "totalViews": totalViews}), 200
+            return json.dumps(True), 200
         else:
             return json.dumps(None), 404
 
@@ -439,13 +443,7 @@ def api_image_like():
 
             images.update(tinydb.operations.set("likes", likes), doc_ids=[id])
 
-            imageList = images.search(Query().owner == username)
-            totalLikes = 0
-
-            for image in imageList:
-                totalLikes += len(image.get("likes"))
-
-            return json.dumps({"likes": len(likes), "totalLikes": totalLikes}), 200
+            return json.dumps({"likes": len(likes)}), 200
 
     return json.dumps(False), 403
 
@@ -733,7 +731,6 @@ def profile():
 
     username = jwtData.get("username")
     uploads = 0
-    totalLikes = totalViews = 0
 
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
@@ -742,59 +739,14 @@ def profile():
 
             if account:
                 uploads = account.get("uploads", 0)
-
-                images = db.table("images")
-                imageList = images.search(Query().owner == username)
-
-                for image in imageList:
-                    totalLikes += len(image.get("likes"))
-                    totalViews += image.get("views")
 
     return render_template(
         "profile.html",
         username=username,
         uploads=uploads,
-        totalLikes=totalLikes,
-        totalViews=totalViews,
         visibility="private",
         loggedIn=True,
     )
-
-
-@app.route("/api/user/info/<username>")
-def api_user_info(username):
-    uploads = 0
-    totalLikes = 0
-    totalViews = 0
-
-    account = None
-
-    with dbLock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            accounts = db.table("accounts")
-            account = accounts.get(Query().username == username)
-
-            if account:
-                uploads = account.get("uploads", 0)
-
-                images = db.table("images")
-                imageList = images.search(Query().owner == username)
-
-                for image in imageList:
-                    totalLikes += len(image.get("likes"))
-                    totalViews += image.get("views")
-
-    if not account:
-        return json.dumps(None), 404
-
-    info = {
-        "date": str(datetime.fromtimestamp(account.get("timestamp"))),
-        "username": username,
-        "likes": totalLikes,
-        "views": totalViews,
-    }
-
-    return jsonify(info)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -815,7 +767,10 @@ def upload():
     if request.method == "POST":
         # the error will be triggered when we first access the `resquest` object
         try:
-            description = request.form.get("description", "")
+            # this prevents HTML code from being stored
+            # directly into the database
+            # thus preventing stored XSS vulnerability
+            description = escape(request.form.get("description", ""))
             file = None
 
             if "fileToUpload" in request.files:
@@ -869,7 +824,6 @@ def upload():
                             "public": False,
                             "description": description,
                             "likes": [],
-                            "views": 0,
                         }
 
                         with dbLock:
