@@ -21,11 +21,11 @@ function loadImages() {
 				createImage(id, type == 'private');
 			});
 
-			var profileUploadInfo = document.querySelector('#numPhotos');
+			var profileNavInfo = document.querySelector('#numPhotos');
 
-			if (profileUploadInfo) {
+			if (profileNavInfo) {
 				var numPhotos = images.length;
-				profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+				profileNavInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
 			}
 		}
 	};
@@ -49,6 +49,7 @@ function createImage(id, viewingProfile) {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			// get the image info
 			var info = JSON.parse(xhr.responseText);
+			console.log(info)
 
 			// create a clone from our template
 			var imageTemplate = document.getElementById('image-box-template');
@@ -76,23 +77,22 @@ function createImage(id, viewingProfile) {
 			imageDescription.innerHTML = info.description;
 			imageDescription.setAttribute('title', info.description);
 
-			var imageViewsContainer = imageBox.querySelector('.image-views-container');
-			var imageViews = imageViewsContainer.querySelector('.image-views');
-			imageViews.innerHTML = info.views + 1; // because we will be viewing it now
-
-			var numViews = document.getElementById('numViews');
-			if (numViews)
-				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
-
 			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			var imageLikes = imageLikesContainer.querySelector('.image-likes'),
-			imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
+			imageLikeImage = imageLikesContainer.querySelector('.icon-container');
 
 			imageLikes.innerHTML = info.likes;
-			imageLikeIcon.setAttribute('liked', info.liked);
+			imageLikeImage.setAttribute('liked', info.liked);
+
+			var whoLiked = imageBox.querySelector('.who-liked')
+			info.who_liked.forEach(element => {
+				const personName = document.createElement('div')
+				personName.innerHTML = element
+				whoLiked.appendChild(personName)
+			});
 
 			if (info.liked)
-				imageLikeIcon.classList.add('dislike');
+				imageLikeImage.classList.add('dislike');
 
 			var imageNav = imageBox.querySelector('.image-navigation-container');
 			var imageNavButtons = imageNav.querySelectorAll('.icon-container');
@@ -205,11 +205,6 @@ function likeImage(event) {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			if (xhr.status == 200) {
 				var json = JSON.parse(xhr.responseText);
-
-				var numLikes = document.getElementById('numLikes');
-				if (numLikes)
-					numLikes.innerHTML = json.totalLikes;
-
 				likeButton.setAttribute('liked', value);
 
 				if (value)
@@ -253,16 +248,6 @@ function deleteImage(event) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			if (xhr.status == 200) {
-				var json = JSON.parse(xhr.responseText);
-
-				var numLikes = document.getElementById('numLikes');
-				if (numLikes)
-					numLikes.innerHTML = json.totalLikes;
-
-				var numViews = document.getElementById('numViews');
-				if (numViews)
-					numViews.innerHTML = json.totalViews;
-
 				imageBox.remove();
 
 				var images = document.getElementById('images');
