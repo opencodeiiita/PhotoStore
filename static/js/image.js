@@ -78,11 +78,11 @@ function createImage(id, viewingProfile) {
 
 			var imageViewsContainer = imageBox.querySelector('.image-views-container');
 			var imageViews = imageViewsContainer.querySelector('.image-views');
-			imageViews.innerHTML = info.views + 1; // because we will be viewing it now
+			imageViews.innerHTML = info.views; // because we will be viewing it now
 
 			var numViews = document.getElementById('numViews');
 			if (numViews)
-				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
+				numViews.innerHTML = parseInt(numViews.innerHTML) + info.views;
 
 			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			var imageLikes = imageLikesContainer.querySelector('.image-likes'),
