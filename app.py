@@ -227,9 +227,6 @@ def api_image_get(id):
     jwtData = decodeFromJWT(token)
     username = jwtData.get("username")
 
-    if not username:
-        return "", 403
-
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
             images = db.table("images")
