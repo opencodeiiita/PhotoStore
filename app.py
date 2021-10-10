@@ -291,6 +291,7 @@ def api_image_info(id):
         "likes": len(image.get("likes")),
         "liked": username and username in image.get("likes"),
         "views": len(image.get("views"))
+        "views": image.get("views"),
     }
 
     if public or owner == username:
@@ -353,7 +354,7 @@ def api_image_delete():
                         totalLikes += len(image.get("likes"))
                         totalViews += len(image.get("views"))
 
-            return json.dumps({ "totalLikes": totalLikes, "totalViews": totalViews}), 200
+            return json.dumps({"totalLikes": totalLikes, "totalViews": totalViews}), 200
         else:
             return json.dumps(None), 404
 
@@ -864,9 +865,7 @@ def upload():
 
                     if allowed_file(file.filename):
                         timestamp = time.time()
-                        timestamp_hash = md5(
-                            str(timestamp).encode("utf-8")
-                        ).hexdigest()
+                        timestamp_hash = md5(str(timestamp).encode("utf-8")).hexdigest()
 
                         filename = f"{username}-{timestamp_hash}.{ext}"
                         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
