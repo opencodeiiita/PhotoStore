@@ -241,6 +241,7 @@ def api_image_get(id):
                 if username not in views:
                     views.append(username)
                     images.update(tinydb.operations.set("views",views), doc_ids=[id])
+                images.update(tinydb.operations.increment("views"), doc_ids=[id])
 
     if not image:
         return "", 404
@@ -293,7 +294,7 @@ def api_image_info(id):
         "public": public,
         "likes": len(image.get("likes")),
         "liked": username and username in image.get("likes"),
-        "views": len(image.get("views"))-1
+        "views": image.get("views")
     }
 
     if public or owner == username:
@@ -354,7 +355,7 @@ def api_image_delete():
 
                     for image in imageList:
                         totalLikes += len(image.get("likes"))
-                        totalViews += len(image.get("views"))
+                        totalViews += image.get("views")
 
             return json.dumps({ "totalLikes": totalLikes, "totalViews": totalViews}), 200
         else:
@@ -759,7 +760,7 @@ def profile():
 
                 for image in imageList:
                     totalLikes += len(image.get("likes"))
-                    totalViews += len(image.get("views"))
+                    totalViews += image.get("views")
 
     return render_template(
         "profile.html",
@@ -793,7 +794,7 @@ def api_user_info(username):
 
                 for image in imageList:
                     totalLikes += len(image.get("likes"))
-                    totalViews += len(image.get("views"))
+                    totalViews += image.get("views")
 
     if not account:
         return json.dumps(None), 404
@@ -882,7 +883,7 @@ def upload():
                             "public": False,
                             "description": description,
                             "likes": [],
-                            "views": [],
+                            "views": 0
                         }
 
                         with dbLock:
