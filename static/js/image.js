@@ -4,6 +4,7 @@ var doNotOwnThisImageMessage = "You don't own this image!",
 	invalidRequest = 'Invalid request!';
 
 function loadImages() {
+	totalViews();
 	var type = document.getElementById('images').getAttribute('value');
 	var URL = '/api/image/list';
 
@@ -16,7 +17,6 @@ function loadImages() {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			var images = JSON.parse(xhr.responseText);
-
 			images.forEach((id) => {
 				createImage(id, type == 'private');
 			});
@@ -30,6 +30,29 @@ function loadImages() {
 		}
 	};
 
+	xhr.send();
+}
+
+function totalViews(){
+	var jwt = $.cookie("jwt");
+	if(jwt){
+		var json = JSON.parse(atob(jwt.split('.')[1]))
+	}
+	else{
+		return 
+	}
+	var username = json.username
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', `/api/user/info/${username}`);
+
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == XMLHttpRequest.DONE) {
+			var info = JSON.parse(xhr.responseText);
+			var numViews = document.getElementById('numViews');
+			if (numViews)
+				numViews.innerHTML = parseInt(info.views);
+		}
+	}
 	xhr.send();
 }
 
@@ -79,10 +102,6 @@ function createImage(id, viewingProfile) {
 			var imageViewsContainer = imageBox.querySelector('.image-views-container');
 			var imageViews = imageViewsContainer.querySelector('.image-views');
 			imageViews.innerHTML = info.views; // because we will be viewing it now
-
-			var numViews = document.getElementById('numViews');
-			if (numViews)
-				numViews.innerHTML = parseInt(numViews.innerHTML) + info.views;
 
 			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			var imageLikes = imageLikesContainer.querySelector('.image-likes'),
