@@ -1,26 +1,26 @@
 $(document).ready(loadCaptcha);
 
 function loadCaptcha() {
-	var captchaReload = document.getElementById('captcha-reload');
+	let captchaReload = document.getElementById('captcha-reload');
 	if (captchaReload.classList.contains('loading'))
 		return;
 
 	captchaReload.classList.add('loading');
 
-	var xhr = new XMLHttpRequest();
+	let xhr = new XMLHttpRequest();
 
 	xhr.open('GET', '/api/captcha');
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			var captcha = JSON.parse(xhr.responseText);
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			let captcha = JSON.parse(xhr.responseText);
 
-			var captchaImage = document.getElementById('captcha-image');
+			let captchaImage = document.getElementById('captcha-image');
 			captchaImage.src = `data:image/png;base64,${captcha.b64}`;
 
-			var captchaJWT = document.getElementById('captcha-jwt');
+			let captchaJWT = document.getElementById('captcha-jwt');
 			captchaJWT.value = captcha.jwt;
 
-			var captchaReload = document.getElementById('captcha-reload');
+			let captchaReload = document.getElementById('captcha-reload');
 			captchaReload.classList.remove('loading');
 		}
 	};
