@@ -1,30 +1,30 @@
 $(document).ready(loadImages);
 
-var doNotOwnThisImageMessage = "You don't own this image!",
+let doNotOwnThisImageMessage = "You don't own this image!",
 	invalidRequest = 'Invalid request!';
 
 function loadImages() {
-	var type = document.getElementById('images').getAttribute('value');
-	var URL = '/api/image/list';
+	let type = document.getElementById('images').getAttribute('value');
+	let URL = '/api/image/list';
 
-	if (type == 'private')
+	if (type === 'private')
 		URL = `${URL}?private=1`;
 
-	var xhr = new XMLHttpRequest();
+	let xhr = new XMLHttpRequest();
 	xhr.open('GET', URL);
 
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			var images = JSON.parse(xhr.responseText);
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			let images = JSON.parse(xhr.responseText);
 
 			images.forEach((id) => {
-				createImage(id, type == 'private');
+				createImage(id, type === 'private');
 			});
 
-			var profileUploadInfo = document.querySelector('#numPhotos');
+			let profileUploadInfo = document.querySelector('#numPhotos');
 
 			if (profileUploadInfo) {
-				var numPhotos = images.length;
+				let numPhotos = images.length;
 				profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
 			}
 		}
@@ -37,32 +37,32 @@ function createImage(id, viewingProfile) {
 	/*
 	 * images are being added when the XHR is complete (synchronous XHR isn't allowed in main thread)
 	 * so they can be inserted in any order
-	 * I tried, inerting using binary search using insertAdjacent... methods
+	 * I tried, inserting using binary search using insertAdjacent... methods
 	 * but the race-condition is possibly messing up my method
 	 * I am leaving with - sortImages();
 	 */
 
-	var xhr = new XMLHttpRequest();
+	let xhr = new XMLHttpRequest();
 	xhr.open('GET', `/api/image/info/${id}`);
 
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
 			// get the image info
-			var info = JSON.parse(xhr.responseText);
+			let info = JSON.parse(xhr.responseText);
 
 			// create a clone from our template
-			var imageTemplate = document.getElementById('image-box-template');
-			var cloneTemplate = imageTemplate.content.cloneNode(true);
+			let imageTemplate = document.getElementById('image-box-template');
+			let cloneTemplate = imageTemplate.content.cloneNode(true);
 
 			// start filling the template
-			var imageBox = cloneTemplate.querySelector('.image-box');
+			let imageBox = cloneTemplate.querySelector('.image-box');
 			imageBox.setAttribute('image_id', id);
 
-			var image = imageBox.querySelector('.image');
+			let image = imageBox.querySelector('.image');
 			image.src = `/api/image/get/${id}`;
 
-			var imageMeta = imageBox.querySelector('.image-meta');
-			var imageOwner = imageMeta.querySelector('.image-owner'),
+			let imageMeta = imageBox.querySelector('.image-meta');
+			let imageOwner = imageMeta.querySelector('.image-owner'),
 			imageDate = imageMeta.querySelector('.image-date');
 
 			if (!viewingProfile) {
@@ -72,20 +72,20 @@ function createImage(id, viewingProfile) {
 
 			imageDate.innerHTML = info.date;
 
-			var imageDescription = imageBox.querySelector('.image-description');
+			let imageDescription = imageBox.querySelector('.image-description');
 			imageDescription.innerHTML = info.description;
 			imageDescription.setAttribute('title', info.description);
 
-			var imageViewsContainer = imageBox.querySelector('.image-views-container');
-			var imageViews = imageViewsContainer.querySelector('.image-views');
+			let imageViewsContainer = imageBox.querySelector('.image-views-container');
+			let imageViews = imageViewsContainer.querySelector('.image-views');
 			imageViews.innerHTML = info.views + 1; // because we will be viewing it now
 
-			var numViews = document.getElementById('numViews');
+			let numViews = document.getElementById('numViews');
 			if (numViews)
 				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
 
-			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
-			var imageLikes = imageLikesContainer.querySelector('.image-likes'),
+			let imageLikesContainer = imageBox.querySelector('.image-likes-container');
+			let imageLikes = imageLikesContainer.querySelector('.image-likes'),
 			imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
 
 			imageLikes.innerHTML = info.likes;
@@ -94,14 +94,14 @@ function createImage(id, viewingProfile) {
 			if (info.liked)
 				imageLikeIcon.classList.add('dislike');
 
-			var imageNav = imageBox.querySelector('.image-navigation-container');
-			var imageNavButtons = imageNav.querySelectorAll('.icon-container');
+			let imageNav = imageBox.querySelector('.image-navigation-container');
+			let imageNavButtons = imageNav.querySelectorAll('.icon-container');
 
-			var downloadImageLink = imageNav.children[0];
+			let downloadImageLink = imageNav.children[0];
 			downloadImageLink.href = `/api/image/get/${id}`;
 
-			var changeVisibilityIcon = imageNavButtons[1].children[0];
-			var value = 'private';
+			let changeVisibilityIcon = imageNavButtons[1].children[0];
+			let value = 'private';
 
 			if (info.public)
 				value = 'public';
@@ -109,12 +109,12 @@ function createImage(id, viewingProfile) {
 			changeVisibilityIcon.src = `static/icons/${value}.png`;
 			imageBox.setAttribute('visibility', value);
 
-			var images = document.getElementById('images');
+			let images = document.getElementById('images');
 			images.appendChild(imageBox);
 			sortImages();
 
 			image.onload = function() {
-				this.style.opacity = 1;
+				this.style.opacity = '1';
 			}
 		}
 	}
@@ -123,8 +123,9 @@ function createImage(id, viewingProfile) {
 }
 
 function sortImages() {
-	var sort_by_id = function(a, b) {
-		let a_id = parseInt(a.getAttribute('image_id')), b_id = parseInt(a.getAttribute('image_id'));
+	let sort_by_id = function(a, b) {
+		let a_id = parseInt(a.getAttribute('image_id')),
+			b_id = parseInt(b.getAttribute('image_id'));
 
 		if (a_id < b_id)
 			return 1;
@@ -134,13 +135,13 @@ function sortImages() {
 		return 0;
 	}
 
-	var images = $('#images > .image-box').get();
+	let images = $('#images > .image-box').get();
 	images.sort(sort_by_id);
 }
 
 function makeImagePublic(event) {
-	var imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	var id = imageBox.getAttribute('image_id');
+	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
+	let id = imageBox.getAttribute('image_id');
 
 	// the user might have clicked on the `div`
 	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
@@ -148,28 +149,28 @@ function makeImagePublic(event) {
 	if (!id)
 		return;
 
-	var img = (event.path || (event.composedPath && event.composedPath()))[0];
-	var value = imageBox.getAttribute('visibility') == 'public' ? 'private' : 'public';
+	let img = (event.path || (event.composedPath && event.composedPath()))[0];
+	let value = imageBox.getAttribute('visibility') === 'public' ? 'private' : 'public';
 
 	let json = JSON.stringify({
 		id: id,
-		value: value == 'public'
+		value: value === 'public'
 	});
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('POST', '/api/image/make_public');
 
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			if (xhr.status == 200) {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			if (xhr.status === 200) {
 				imageBox.setAttribute('visibility', value);
 				img.src = `/static/icons/${value}.png`;
 			}
 			else
-			if (xhr.status == 403)
+			if (xhr.status === 403)
 				alert(doNotOwnThisImageMessage);
 			else
-			if (xhr.status == 404)
+			if (xhr.status === 404)
 				alert(invalidRequest);
 			else
 				alert('Check your network!');
@@ -180,8 +181,8 @@ function makeImagePublic(event) {
 }
 
 function likeImage(event) {
-	var imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	var id = imageBox.getAttribute('image_id');
+	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
+	let id = imageBox.getAttribute('image_id');
 
 	// the user might have clicked on the `div`
 	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
@@ -189,9 +190,9 @@ function likeImage(event) {
 	if (!id)
 		return;
 
-	var likeButton = (event.path || (event.composedPath && event.composedPath()))[1];
-	var likes = (event.path || (event.composedPath && event.composedPath()))[2].children[0];
-	var value = !(likeButton.getAttribute('liked') == 'true');
+	let likeButton = (event.path || (event.composedPath && event.composedPath()))[1];
+	let likes = (event.path || (event.composedPath && event.composedPath()))[2].children[0];
+	let value = !(likeButton.getAttribute('liked') === 'true');
 
 	let json = JSON.stringify({
 		id: id,
@@ -202,11 +203,11 @@ function likeImage(event) {
 	xhr.open('POST', '/api/image/like');
 
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			if (xhr.status == 200) {
-				var json = JSON.parse(xhr.responseText);
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			if (xhr.status === 200) {
+				let json = JSON.parse(xhr.responseText);
 
-				var numLikes = document.getElementById('numLikes');
+				let numLikes = document.getElementById('numLikes');
 				if (numLikes)
 					numLikes.innerHTML = json.totalLikes;
 
@@ -220,10 +221,10 @@ function likeImage(event) {
 				likes.innerHTML = json.likes;
 			}
 			else
-			if (xhr.status == 403)
+			if (xhr.status === 403)
 				alert('You need to be logged in to like an image!');
 			else
-			if (xhr.status == 404)
+			if (xhr.status === 404)
 				alert("Invalid request, refresh the page!");
 			else
 				alert('Check your network!');
@@ -234,8 +235,8 @@ function likeImage(event) {
 }
 
 function deleteImage(event) {
-	var imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	var id = imageBox.getAttribute('image_id');
+	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
+	let id = imageBox.getAttribute('image_id');
 
 	// the user might have clicked on the `div`
 	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
@@ -251,34 +252,34 @@ function deleteImage(event) {
 	xhr.open('POST', '/api/image/delete');
 
 	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			if (xhr.status == 200) {
-				var json = JSON.parse(xhr.responseText);
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			if (xhr.status === 200) {
+				let json = JSON.parse(xhr.responseText);
 
-				var numLikes = document.getElementById('numLikes');
+				let numLikes = document.getElementById('numLikes');
 				if (numLikes)
 					numLikes.innerHTML = json.totalLikes;
 
-				var numViews = document.getElementById('numViews');
+				let numViews = document.getElementById('numViews');
 				if (numViews)
 					numViews.innerHTML = json.totalViews;
 
 				imageBox.remove();
 
-				var images = document.getElementById('images');
-				var type = images.getAttribute('value');
+				let images = document.getElementById('images');
+				let type = images.getAttribute('value');
 
-				if (type == 'private') {
-					var profileNavInfo = document.querySelector('#numPhotos');
-					var numPhotos = images.children.length - 1; // -1 for the `<template>` child
+				if (type === 'private') {
+					let profileNavInfo = document.querySelector('#numPhotos');
+					let numPhotos = images.children.length - 1; // -1 for the `<template>` child
 					profileNavInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
 				}
 			}
 			else
-			if (xhr.status == 403)
+			if (xhr.status === 403)
 				alert(doNotOwnThisImageMessage);
 			else
-			if (xhr.status == 404)
+			if (xhr.status === 404)
 				alert(invalidRequest);
 			else
 				alert('Check your network!');
