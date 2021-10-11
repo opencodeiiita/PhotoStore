@@ -291,6 +291,7 @@ def api_image_info(id):
         "likes": len(image.get("likes")),
         "liked": username and username in image.get("likes"),
         "views": len(image.get("views")),
+        "who_liked": image.get("likes"),
         "firstSeen": username and username not in image.get("views")
     }
 
@@ -458,7 +459,7 @@ def api_image_like():
 
             likesCount = len(likes)
 
-    return json.dumps({"likes": likesCount, "totalLikes": totalLikes}), 200
+    return json.dumps({"likes": likesCount, "totalLikes": totalLikes, "who_liked":likes}), 200
 
 
 @app.route("/avatar", methods=["GET", "POST"])

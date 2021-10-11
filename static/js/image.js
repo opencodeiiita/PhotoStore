@@ -114,7 +114,7 @@ function createImage(id, viewingProfile) {
 				// because we will be viewing it now
 				imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
 				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
-			}
+      }
 
 			let imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			let imageLikes = imageLikesContainer.querySelector('.image-likes'),
@@ -125,6 +125,14 @@ function createImage(id, viewingProfile) {
 
 			if (info.liked)
 				imageLikeIcon.classList.add('dislike');
+
+			var whoLiked = imageBox.querySelector('.who-liked')
+			info.who_liked.forEach(element => {
+				const personName = document.createElement('div')
+				personName.className='personNameDiv'
+				personName.innerHTML = element
+				whoLiked.appendChild(personName)
+			});
 
 			let imageNav = imageBox.querySelector('.image-navigation-container');
 			let imageNavButtons = imageNav.querySelectorAll('.icon-container');
@@ -251,6 +259,15 @@ function likeImage(event) {
 					likeButton.classList.remove('dislike');
 
 				likes.innerHTML = json.likes;
+
+				var whoLiked = imageBox.querySelector('.who-liked')
+				whoLiked.innerHTML=''
+				json.who_liked.forEach(element => {
+				const personName = document.createElement('div')
+				personName.className='personNameDiv'
+				personName.innerHTML = element
+				whoLiked.appendChild(personName)
+				});
 			}
 			else
 			if (xhr.status === 403)
