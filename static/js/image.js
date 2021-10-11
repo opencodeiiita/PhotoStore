@@ -36,8 +36,9 @@ function loadImages() {
 
 function totalViews(){
 	let jwt = $.cookie("jwt");
+	let json;
 	if(jwt) {
-		let json = JSON.parse(atob(jwt.split('.')[1]))
+		json = JSON.parse(atob(jwt.split('.')[1]))
 	}
 	else{
 		return;
@@ -108,7 +109,7 @@ function createImage(id, viewingProfile) {
 			let numViews = document.getElementById('numViews');
 			if (numViews)
 				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
-			}
+			
 
 			let imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			let imageLikes = imageLikesContainer.querySelector('.image-likes'),
@@ -119,6 +120,14 @@ function createImage(id, viewingProfile) {
 
 			if (info.liked)
 				imageLikeIcon.classList.add('dislike');
+
+			var whoLiked = imageBox.querySelector('.who-liked')
+			info.who_liked.forEach(element => {
+				const personName = document.createElement('div')
+				personName.className='personNameDiv'
+				personName.innerHTML = element
+				whoLiked.appendChild(personName)
+			});
 
 			let imageNav = imageBox.querySelector('.image-navigation-container');
 			let imageNavButtons = imageNav.querySelectorAll('.icon-container');
@@ -245,6 +254,15 @@ function likeImage(event) {
 					likeButton.classList.remove('dislike');
 
 				likes.innerHTML = json.likes;
+
+				var whoLiked = imageBox.querySelector('.who-liked')
+				whoLiked.innerHTML=''
+				json.who_liked.forEach(element => {
+				const personName = document.createElement('div')
+				personName.className='personNameDiv'
+				personName.innerHTML = element
+				whoLiked.appendChild(personName)
+				});
 			}
 			else
 			if (xhr.status === 403)
