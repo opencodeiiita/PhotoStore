@@ -4,6 +4,7 @@ let doNotOwnThisImageMessage = "You don't own this image!",
 	invalidRequest = 'Invalid request!';
 
 function loadImages() {
+	totalViews();
 	let type = document.getElementById('images').getAttribute('value');
 	let URL = '/api/image/list';
 
@@ -30,6 +31,30 @@ function loadImages() {
 		}
 	};
 
+	xhr.send();
+}
+
+function totalViews(){
+	let jwt = $.cookie("jwt");
+	if(jwt) {
+		let json = JSON.parse(atob(jwt.split('.')[1]))
+	}
+	else{
+		return;
+	}
+  
+	let username = json.username
+	let xhr = new XMLHttpRequest();
+	xhr.open('GET', `/api/user/info/${username}`);
+
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == XMLHttpRequest.DONE) {
+			let info = JSON.parse(xhr.responseText);
+			let numViews = document.getElementById('numViews');
+			if (numViews)
+				numViews.innerHTML = parseInt(info.views);
+		}
+	}
 	xhr.send();
 }
 
@@ -83,6 +108,7 @@ function createImage(id, viewingProfile) {
 			let numViews = document.getElementById('numViews');
 			if (numViews)
 				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
+			}
 
 			let imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			let imageLikes = imageLikesContainer.querySelector('.image-likes'),
