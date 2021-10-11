@@ -211,7 +211,7 @@ a.underline:hover:after {
 
 .wobbly-container {
 	display: flex;
-	align-items: space-around;
+	align-items: center;
 	justify-content: space-around;
 	flex-wrap: wrap;
 }
@@ -467,7 +467,7 @@ a.underline:hover:after {
 	font-size: 1.2em;
 	padding: 0.2em;
 	background-color: var(--box-bg-color);
-	color: (--box-text-color);
+	color: var(--box-text-color);
 	border: 0.1em solid black;
 	border-radius: 0.8em;
 	margin-bottom: 0.5em;

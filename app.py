@@ -32,7 +32,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 # we will be using hashes
 # from werkzeug.utils import secure_filename
 
-# to pretiffy the rendered HTML document
+# to prettify the rendered HTML document
 from flask_pretty import Prettify
 
 # to sanitize input
@@ -137,7 +137,7 @@ def generateCaptcha():
         algorithm="HS256",
     )
 
-    return (captcha_value, captcha_base64, captcha_hash, captcha_jwt)
+    return captcha_value, captcha_base64, captcha_hash, captcha_jwt
 
 
 def verifyCaptcha(captcha_answer, token):
@@ -253,6 +253,7 @@ def api_image_get(id):
 
     if not os.path.isfile(filepath):
         return "", 404
+
     resp = make_response(send_from_directory(app.config["UPLOAD_FOLDER"], filename))
     resp.headers["Content-Security-Policy"] = "default-src 'self'"
     return resp
@@ -429,6 +430,8 @@ def api_image_like():
     if not image:
         return json.dumps(None), 404
 
+    likesCount = 0
+
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
             images = db.table("images")
@@ -441,10 +444,9 @@ def api_image_like():
                 likes.remove(username)
 
             images.update(tinydb.operations.set("likes", likes), doc_ids=[id])
+            likesCount = len(likes)
 
-            return json.dumps({"likes": len(likes)}), 200
-
-    return json.dumps(False), 403
+    return json.dumps({"likes": likesCount}), 200
 
 
 @app.route("/avatar", methods=["GET", "POST"])
