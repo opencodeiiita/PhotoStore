@@ -39,7 +39,7 @@ function totalViews(){
 		var json = JSON.parse(atob(jwt.split('.')[1]))
 	}
 	else{
-		return 
+		return;
 	}
 	var username = json.username
 	var xhr = new XMLHttpRequest();
@@ -101,7 +101,15 @@ function createImage(id, viewingProfile) {
 
 			var imageViewsContainer = imageBox.querySelector('.image-views-container');
 			var imageViews = imageViewsContainer.querySelector('.image-views');
-			imageViews.innerHTML = info.views; // because we will be viewing it now
+			imageViews.innerHTML = info.views;
+
+			if (info.firstSeen) {
+				// because we will be viewing it now
+				imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
+
+				var numViews = document.getElementById("numViews");
+				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
+			}
 
 			var imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			var imageLikes = imageLikesContainer.querySelector('.image-likes'),

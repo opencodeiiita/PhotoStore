@@ -290,7 +290,8 @@ def api_image_info(id):
         "public": public,
         "likes": len(image.get("likes")),
         "liked": username and username in image.get("likes"),
-        "views": len(image.get("views"))
+        "views": len(image.get("views")),
+        "firstSeen": username and username not in image.get("views")
     }
 
     if public or owner == username:
