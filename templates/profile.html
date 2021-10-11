@@ -6,9 +6,7 @@ Profile
 
 {% block heading %}
 <div class="profile-container">
-	<div class="profile-username" title="{{ username }}">
-		{{ username }}
-	</div>
+	<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
 
 	<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
 		<input id="avatarChange" style="display: none;" type=file name="avatar"

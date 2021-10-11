@@ -3,6 +3,31 @@ $(document).ready(loadImages);
 let doNotOwnThisImageMessage = 'You don\'t own this image!',
 	invalidRequest = 'Invalid request!';
 
+// We can keep this function in some other file
+// if it is required somewhere else
+function getUsername() {
+	let jwtCookie = $.cookie('jwt');
+	try {
+		let base64Payload = jwtCookie.split('.')[1];
+		let decodedData = JSON.parse(atob(base64Payload));
+		return decodedData.username;
+	}
+	catch (err) {
+	}
+
+	return null;
+}
+
+function appendUserInLikes(username, whoLiked) {
+	const personName = document.createElement('div');
+	personName.classList.add('personNameDiv');
+	personName.classList.add('overflow-ellipsis');
+	personName.innerText = username;
+
+	// insert the username into `who-liked` list
+	whoLiked.appendChild(personName);
+}
+
 function loadImages() {
 	totalViews();
 	let type = document.getElementById('images').getAttribute('value');
@@ -35,17 +60,10 @@ function loadImages() {
 }
 
 function totalViews(){
-	let jwt = $.cookie('jwt');
-	let json;
+	let username = getUsername();
 
-	if (jwt) {
-		json = JSON.parse(atob(jwt.split('.')[1]))
-	}
-	else {
+	if (!username)
 		return;
-	}
-
-	let username = json.username;
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', `/api/user/info/${username}`);
@@ -54,10 +72,12 @@ function totalViews(){
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			let info = JSON.parse(xhr.responseText);
 			let numViews = document.getElementById('numViews');
+
 			if (numViews)
 				numViews.innerHTML = parseInt(info.views);
 		}
 	}
+
 	xhr.send();
 }
 
@@ -114,24 +134,25 @@ function createImage(id, viewingProfile) {
 				// because we will be viewing it now
 				imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
 				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
-      }
+			}
 
 			let imageLikesContainer = imageBox.querySelector('.image-likes-container');
 			let imageLikes = imageLikesContainer.querySelector('.image-likes'),
 			imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
 
-			imageLikes.innerHTML = info.likes;
-			imageLikeIcon.setAttribute('liked', info.liked);
+			let imageLiked = info.likes.includes(getUsername());
+			imageLikes.innerHTML = info.likes.length;
+			imageLikeIcon.setAttribute('liked', imageLiked);
 
-			if (info.liked)
+			if (imageLiked)
 				imageLikeIcon.classList.add('dislike');
 
-			var whoLiked = imageBox.querySelector('.who-liked')
-			info.who_liked.forEach(element => {
-				const personName = document.createElement('div')
-				personName.className='personNameDiv'
-				personName.innerHTML = element
-				whoLiked.appendChild(personName)
+			var whoLiked = imageBox.querySelector('.who-liked');
+
+			// clear the container
+			whoLiked.innerHTML = '';
+			info.likes.forEach(username => {
+				appendUserInLikes(username, whoLiked);
 			});
 
 			let imageNav = imageBox.querySelector('.image-navigation-container');
@@ -258,15 +279,14 @@ function likeImage(event) {
 				else
 					likeButton.classList.remove('dislike');
 
-				likes.innerHTML = json.likes;
+				likes.innerHTML = json.likes.length;
 
-				var whoLiked = imageBox.querySelector('.who-liked')
-				whoLiked.innerHTML=''
-				json.who_liked.forEach(element => {
-				const personName = document.createElement('div')
-				personName.className='personNameDiv'
-				personName.innerHTML = element
-				whoLiked.appendChild(personName)
+				var whoLiked = imageBox.querySelector('.who-liked');
+
+				// clear the container
+				whoLiked.innerHTML = '';
+				json.likes.forEach(username => {
+					appendUserInLikes(username, whoLiked);
 				});
 			}
 			else

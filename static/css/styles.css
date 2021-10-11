@@ -209,6 +209,12 @@ a.underline:hover:after {
 	transition: transform 0s var(--transition-duration) cubic-bezier(0.175, 0.875, 0.32, 1.275), opacity 0s var(--transition-duration);
 }
 
+.overflow-ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .wobbly-container {
 	display: flex;
 	align-items: center;
@@ -264,12 +270,6 @@ a.underline:hover:after {
 	justify-content: center;
 	max-width: 100%;
 	gap: 0.4em;
-}
-
-.profile-username {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .profile-image {
@@ -594,9 +594,6 @@ a.underline:hover:after {
 
 .image-owner {
 	font-weight: bold;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .image-date {
@@ -611,10 +608,6 @@ a.underline:hover:after {
 	color: var(--image-overlay-box-text-color);
 
 	border-radius: 0 0 0.4em 0.4em;
-
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .image-views-container,
@@ -630,10 +623,10 @@ a.underline:hover:after {
 	min-width: 40%;
 	max-width: 48%;
 
-	height: 16%;
+	height: 2.8em;
 	padding: 0.4em;
 
-	top: 3.54em;
+	top: 3.6em;
 
 	background-color: var(--image-overlay-box-bg-color);
 	color: var(--image-overlay-box-text-color);
@@ -651,16 +644,10 @@ a.underline:hover:after {
 
 .image-views {
 	text-align: center;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .image-likes {
 	text-align: center;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .image-likes-container .icon-container {
@@ -701,7 +688,7 @@ a.underline:hover:after {
 	border-radius: 0 0 0.4em 0.4em;
 }
 
-.who-liked{
+.who-liked {
 	position: absolute;
 
 	display: flex;
@@ -711,11 +698,11 @@ a.underline:hover:after {
 	min-width: 40%;
 	max-width: 100%;
 
-	height: 40%;
+	height: 8.4em;
 
 	border-radius: 0.4em 0 0 0.4em;
 	right: 0;
-	top: 6.46em;
+	top: 6.6em;
 
 	background-color: var(--image-overlay-box-bg-color);
 	color: var(--image-overlay-box-text-color);
@@ -723,8 +710,9 @@ a.underline:hover:after {
 	overflow-y: scroll;
 }
 
-.personNameDiv{
-	padding: 0.1em;
+.who-liked .personNameDiv {
+	padding: 0.1em 0 0.1em 0;
+	max-width: 96%;
 }
 
 .who-liked::-webkit-scrollbar {
@@ -735,16 +723,19 @@ a.underline:hover:after {
 	background: #f1f1f1;
   }
 
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
+ /* Handle */
+::-webkit-scrollbar-thumb {
 	background: #888;
   }
 
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
+ /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
 	background: #555;
-  }
+}
 
+/*
+ * media queries here!
+ */
 
 @media only screen and (max-width: 660px) {
 	:root {
@@ -761,19 +752,14 @@ a.underline:hover:after {
 		width: 18em;
 	}
 
-	.image-likes-container{
-		top:5.1em;
+	.image-likes-container,
+	.image-views-container {
+		top: 5.1em;
 		font-size: 0.7em;
 		height: 13%;
 	}
 
-	.image-views-container{
-		top:5.1em;
-		font-size: 0.7em;
-		height: 13%;
-	}
-
-	.who-liked{
+	.who-liked {
 		top: 6.01em;
 	}
 }

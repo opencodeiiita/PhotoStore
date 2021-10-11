@@ -235,9 +235,9 @@ def api_image_get(id):
             if image:
                 views = image.get("views")
 
-                if username not in views:
+                if username and username not in views:
                     views.append(username)
-                    images.update(tinydb.operations.set("views",views), doc_ids=[id])
+                    images.update(tinydb.operations.set("views", views), doc_ids=[id])
 
     if not image:
         return "", 404
@@ -288,11 +288,9 @@ def api_image_info(id):
         "owner": owner,
         "description": image.get("description"),
         "public": public,
-        "likes": len(image.get("likes")),
-        "liked": username and username in image.get("likes"),
+        "likes": image.get("likes"),
         "views": len(image.get("views")),
-        "who_liked": image.get("likes"),
-        "firstSeen": username and username not in image.get("views")
+        "firstSeen": username and username not in image.get("views"),
     }
 
     if public or owner == username:
@@ -436,7 +434,6 @@ def api_image_like():
     if not image:
         return json.dumps(None), 404
 
-    likesCount = 0
     totalLikes = 0
 
     with dbLock:
@@ -457,9 +454,7 @@ def api_image_like():
             for image in imageList:
                 totalLikes += len(image.get("likes"))
 
-            likesCount = len(likes)
-
-    return json.dumps({"likes": likesCount, "totalLikes": totalLikes, "who_liked":likes}), 200
+    return json.dumps({"likes": likes, "totalLikes": totalLikes}), 200
 
 
 @app.route("/avatar", methods=["GET", "POST"])

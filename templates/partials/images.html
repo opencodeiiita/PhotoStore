@@ -1,6 +1,5 @@
 <script src="{{ url_for('static', filename='js/image.js') }}" type="text/javascript" defer async></script>
 
-
 <div id="images" class="images-container" value="{{ visibility }}">
 	<template id="image-box-template">
 		<div class="image-box">
@@ -9,7 +8,7 @@
 			<div class="image-overlay-container">
 				<div class="image-info-container">
 					<div class="image-meta">
-						<div class="image-owner">
+						<div class="image-owner overflow-ellipsis">
 							{# owner, on top-left #}
 						</div>
 
@@ -18,13 +17,13 @@
 						</div>
 					</div>
 
-					<div class="image-description">
+					<div class="image-description overflow-ellipsis">
 						{# description #}
 					</div>
 				</div>
 
 				<div class="image-views-container">
-					<div class="image-views">
+					<div class="image-views overflow-ellipsis">
 						{# views #}
 					</div>
 
@@ -36,7 +35,7 @@
 				</div>
 
 				<div class="image-likes-container">
-					<div class="image-likes">
+					<div class="image-likes overflow-ellipsis">
 						{# likes #}
 					</div>
 
@@ -46,6 +45,10 @@
 							title="Like/Unlike this image"
 						>
 					</div>
+				</div>
+
+				<div class="who-liked">
+					{# list of users who liked this image #}
 				</div>
 
 				<div class="image-navigation-container">
@@ -71,9 +74,6 @@
 							title="Delete this image"
 						>
 					</div>
-				</div>
-				<div class="who-liked">
-
 				</div>
 			</div>
 		</div>
