@@ -55,6 +55,15 @@ python app.py
 
 # Server will run on `localhost:8080`
 # you can modify this in `app.py` and/or `server.py`
+
+# To clean the database, reset the web application
+# remove `photostore.db` and clear the `uploads` directory
+
+# for Linux
+rm photostore.db uploads/*
+
+# for Windows
+del photostore.db uploads/*
 ```
 
 ## Issues
