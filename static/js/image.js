@@ -1,6 +1,6 @@
 $(document).ready(loadImages);
 
-let doNotOwnThisImageMessage = "You don't own this image!",
+let doNotOwnThisImageMessage = 'You don\'t own this image!',
 	invalidRequest = 'Invalid request!';
 
 function loadImages() {
@@ -35,15 +35,18 @@ function loadImages() {
 }
 
 function totalViews(){
-	let jwt = $.cookie("jwt");
-	if(jwt) {
-		let json = JSON.parse(atob(jwt.split('.')[1]))
+	let jwt = $.cookie('jwt');
+	let json;
+
+	if (jwt) {
+		json = JSON.parse(atob(jwt.split('.')[1]))
 	}
-	else{
+	else {
 		return;
 	}
-  
-	let username = json.username
+
+	let username = json.username;
+
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', `/api/user/info/${username}`);
 
@@ -103,10 +106,13 @@ function createImage(id, viewingProfile) {
 
 			let imageViewsContainer = imageBox.querySelector('.image-views-container');
 			let imageViews = imageViewsContainer.querySelector('.image-views');
-			imageViews.innerHTML = info.views + 1; // because we will be viewing it now
+			imageViews.innerHTML = info.views;
 
 			let numViews = document.getElementById('numViews');
-			if (numViews)
+
+			if (numViews && info.firstSeen) {
+				// because we will be viewing it now
+				imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
 				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
 			}
 
@@ -251,7 +257,7 @@ function likeImage(event) {
 				alert('You need to be logged in to like an image!');
 			else
 			if (xhr.status === 404)
-				alert("Invalid request, refresh the page!");
+				alert('Invalid request, refresh the page!');
 			else
 				alert('Check your network!');
 		}
