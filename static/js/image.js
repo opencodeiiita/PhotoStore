@@ -33,9 +33,13 @@ function loadImages() {
 	let type = document.getElementById('images').getAttribute('value');
 	let URL = '/api/image/list';
 
-	if (type === 'private')
+	if(type === 'trending'){
+		URL = `${URL}?trending=1`
+	}
+	else if (type === 'private'){
 		URL = `${URL}?private=1`;
-
+	}
+	
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', URL);
 
