@@ -1,6 +1,6 @@
 <script src="{{ url_for('static', filename='js/image.js') }}" type="text/javascript" defer async></script>
 
-<div id="images" class="images-container" value="{{ visibility }}">
+<div id="images" class="images-container" pagetype="{{ pagetype }}">
 	<template id="image-box-template">
 		<div class="image-box">
 			<img class="image" src="" loading="lazy">
@@ -63,3 +63,11 @@
 		</div>
 	</template>
 </div>
+
+<!--
+       we will remove this element when all of the images are loaded
+       this element will stay at the bottom of our `images-container`
+
+       or show some message when there are no images to show
+-->
+<div id="images-message">loading...</div>
