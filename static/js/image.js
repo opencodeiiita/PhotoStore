@@ -48,14 +48,6 @@ function loadImages() {
 }
 
 function createImageBox(id, viewingProfile, resolve) {
-	/*
-	 * images are being added when the XHR is complete (synchronous XHR isn't allowed in main thread)
-	 * so they can be inserted in any order
-	 * I tried, inserting using binary search using insertAdjacent... methods
-	 * but the race-condition is possibly messing up my method
-	 * I am leaving with - sortImages();
-	 */
-
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', `/api/image/info/${id}`);
 
@@ -132,10 +124,11 @@ function createImageBox(id, viewingProfile, resolve) {
 	xhr.send();
 }
 
-function sortImages() {
+function sortImages(lambda) {
+	// lambda = (imageBox) => imageBox.getAttribute('image_id')
+
 	let sort_by_id = function(a, b) {
-		let a_id = parseInt(a.getAttribute('image_id')),
-			b_id = parseInt(b.getAttribute('image_id'));
+		let a_id = lambda(a), b_id = lambda(b);
 
 		if (a_id < b_id)
 			return 1;
