@@ -4,21 +4,15 @@
 Trending Photos
 {% endblock heading %}
 
-
 {% block content %}
 {% include 'partials/images.html' %}
 
+<!-- section separator -->
+<hr style="width: 100%; text-align: left; margin-left: 0">
+
 <script src="{{ url_for('static', filename='js/wobbly.js') }}" type="text/javascript" defer></script>
 
-<hr style="width:100%;text-align:left;margin-left:0">
-
-{% block title %}
-Woobles
-{% endblock title %}
-
-
 <div class="wobbly-container">
-
 	<div class="wobbly-image-box">
 		<img src="{{ url_for('static', filename="images/family.png") }}">
 	</div>
