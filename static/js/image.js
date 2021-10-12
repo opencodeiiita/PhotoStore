@@ -63,7 +63,9 @@ function loadImages() {
 				imagesMessage.remove();
 			}
 			else {
-				profileUploadInfo.innerHTML = `You haven't uploaded any photos yet`;
+				if (profileUploadInfo)
+					profileUploadInfo.innerHTML = `You haven't uploaded any photos yet`;
+
 				imagesMessage.innerText = 'Aw snap! No images to show!';
 			}
 		}
