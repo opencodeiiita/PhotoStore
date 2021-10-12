@@ -33,7 +33,7 @@ function loadImages() {
 	let type = document.getElementById('images').getAttribute('value');
 	let URL = '/api/image/list';
 
-	if(window.location.href == 'http://localhost:8080/'){
+	if(type === 'main'){
 		URL = `${URL}?main=1`
 	}
 	else if (type === 'private'){

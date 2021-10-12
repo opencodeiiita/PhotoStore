@@ -1,9 +1,29 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
+{% block title %}
+Trending photos
+{% endblock title %}
+{% include 'partials/images.html' %}
+
 <script src="{{ url_for('static', filename='js/wobbly.js') }}" type="text/javascript" defer></script>
 
+
 <div class="wobbly-container">
-	{% include 'partials/images.html' %}
+	<div class="wobbly-image-box">
+		<img src="{{ url_for('static', filename="images/family.png") }}">
+	</div>
+
+	<div class="wobbly-image-box">
+		<img src="{{ url_for('static', filename="images/family-time.png") }}">
+	</div>
+
+	<div class="wobbly-image-box">
+		<img src="{{ url_for('static', filename="images/selfie.png") }}">
+	</div>
+
+	<div class="wobbly-image-box">
+		<img src="{{ url_for('static', filename="images/fireworks.png") }}">
+	</div>
 </div>
 {% endblock content %}
