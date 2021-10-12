@@ -207,7 +207,11 @@ def api_image_list():
                 data += images.search(Query().public == True)
 
             # sort such that most recent images comes first
-            data.sort(key=lambda image: image["timestamp"], reverse=True)
+            formain = request.args.get("main", False)
+            if formain:
+                data.sort(key=lambda image: (len(image["likes"]) + len(image["views"]))/2, reverse=True)
+            else:
+                data.sort(key=lambda image: image["timestamp"], reverse=True)    
             data = [image.doc_id for image in data]
 
     return jsonify(data)
