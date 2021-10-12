@@ -30,32 +30,41 @@ function appendUserInLikes(username, whoLiked) {
 
 function loadImages() {
 	totalViews();
-	let type = document.getElementById('images').getAttribute('value');
+
+	let pagetype = document.getElementById('images').getAttribute('pagetype');
 	let URL = '/api/image/list';
 
-	if(type === 'trending'){
-		URL = `${URL}?trending=1`
-	}
-	else if (type === 'private'){
-		URL = `${URL}?private=1`;
-	}
-	
+	if (pagetype)
+		URL = `${URL}?pagetype=${pagetype}`;
+
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', URL);
 
-	xhr.onreadystatechange = function() {
+	xhr.onreadystatechange = async function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
-			let images = JSON.parse(xhr.responseText);
+			let imageList = JSON.parse(xhr.responseText),
+				profileUploadInfo = document.querySelector('#numPhotos'),
+				images = document.getElementById('images'),
+				imagesMessage = document.getElementById('images-message');
 
-			images.forEach((id) => {
-				createImage(id, type === 'private');
-			});
+			if (imageList.length > 0) {
+				if (profileUploadInfo)
+					profileUploadInfo.innerHTML = `You have uploaded ${imageList.length} photos`;
 
-			let profileUploadInfo = document.querySelector('#numPhotos');
+				for (let idx in imageList) {
+					let imageBox = await new Promise(resolve => {
+						createImageBox(imageList[idx], pagetype === 'profile', resolve);
+					});
 
-			if (profileUploadInfo) {
-				let numPhotos = images.length;
-				profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+					if (imageBox)
+						images.appendChild(imageBox);
+				}
+
+				imagesMessage.remove();
+			}
+			else {
+				profileUploadInfo.innerHTML = `You haven't uploaded any photos yet`;
+				imagesMessage.innerText = 'Aw snap! No images to show!';
 			}
 		}
 	};
@@ -85,7 +94,7 @@ function totalViews(){
 	xhr.send();
 }
 
-function createImage(id, viewingProfile) {
+function createImageBox(id, viewingProfile, resolve) {
 	/*
 	 * images are being added when the XHR is complete (synchronous XHR isn't allowed in main thread)
 	 * so they can be inserted in any order
@@ -99,87 +108,91 @@ function createImage(id, viewingProfile) {
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
-			// get the image info
-			let info = JSON.parse(xhr.responseText);
+			if (xhr.status == 200) {
+				// get the image info
+				let info = JSON.parse(xhr.responseText);
 
-			// create a clone from our template
-			let imageTemplate = document.getElementById('image-box-template');
-			let cloneTemplate = imageTemplate.content.cloneNode(true);
+				// create a clone from our template
+				let imageTemplate = document.getElementById('image-box-template');
+				let cloneTemplate = imageTemplate.content.cloneNode(true);
 
-			// start filling the template
-			let imageBox = cloneTemplate.querySelector('.image-box');
-			imageBox.setAttribute('image_id', id);
+				// start filling the template
+				let imageBox = cloneTemplate.querySelector('.image-box');
+				imageBox.setAttribute('image_id', id);
 
-			let image = imageBox.querySelector('.image');
-			image.src = `/api/image/get/${id}`;
+				let image = imageBox.querySelector('.image');
+				image.src = `/api/image/get/${id}`;
 
-			let imageMeta = imageBox.querySelector('.image-meta');
-			let imageOwner = imageMeta.querySelector('.image-owner'),
-			imageDate = imageMeta.querySelector('.image-date');
+				let imageMeta = imageBox.querySelector('.image-meta');
+				let imageOwner = imageMeta.querySelector('.image-owner'),
+				imageDate = imageMeta.querySelector('.image-date');
 
-			if (!viewingProfile) {
-				imageOwner.innerHTML = info.owner;
-				imageOwner.setAttribute('title', info.owner);
+				if (!viewingProfile) {
+					imageOwner.innerHTML = info.owner;
+					imageOwner.setAttribute('title', info.owner);
+				}
+
+				imageDate.innerHTML = info.date;
+
+				let imageDescription = imageBox.querySelector('.image-description');
+				imageDescription.innerHTML = info.description;
+				imageDescription.setAttribute('title', info.description);
+
+				let imageViewsContainer = imageBox.querySelector('.image-views-container');
+				let imageViews = imageViewsContainer.querySelector('.image-views');
+				imageViews.innerHTML = info.views;
+
+				let numViews = document.getElementById('numViews');
+
+				if (numViews && info.firstSeen) {
+					// because we will be viewing it now
+					imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
+					numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
+				}
+
+				let imageLikesContainer = imageBox.querySelector('.image-likes-container');
+				let imageLikes = imageLikesContainer.querySelector('.image-likes'),
+				imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
+
+				let imageLiked = info.likes.includes(getUsername());
+				imageLikes.innerHTML = info.likes.length;
+				imageLikeIcon.setAttribute('liked', imageLiked);
+
+				if (imageLiked)
+					imageLikeIcon.classList.add('dislike');
+
+				var whoLiked = imageBox.querySelector('.who-liked');
+
+				// clear the container
+				whoLiked.innerHTML = '';
+				info.likes.forEach(username => {
+					appendUserInLikes(username, whoLiked);
+				});
+
+				let imageNav = imageBox.querySelector('.image-navigation-container');
+				let imageNavButtons = imageNav.querySelectorAll('.icon-container');
+
+				let downloadImageLink = imageNav.children[0];
+				downloadImageLink.href = `/api/image/get/${id}`;
+
+				let changeVisibilityIcon = imageNavButtons[1].children[0];
+				let value = 'private';
+
+				if (info.public)
+					value = 'public';
+
+				changeVisibilityIcon.src = `static/icons/${value}.png`;
+				imageBox.setAttribute('visibility', value);
+
+				image.onload = function() {
+					this.style.opacity = '1';
+				}
+
+				resolve(imageBox);
 			}
-
-			imageDate.innerHTML = info.date;
-
-			let imageDescription = imageBox.querySelector('.image-description');
-			imageDescription.innerHTML = info.description;
-			imageDescription.setAttribute('title', info.description);
-
-			let imageViewsContainer = imageBox.querySelector('.image-views-container');
-			let imageViews = imageViewsContainer.querySelector('.image-views');
-			imageViews.innerHTML = info.views;
-
-			let numViews = document.getElementById('numViews');
-
-			if (numViews && info.firstSeen) {
-				// because we will be viewing it now
-				imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
-				numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
-			}
-
-			let imageLikesContainer = imageBox.querySelector('.image-likes-container');
-			let imageLikes = imageLikesContainer.querySelector('.image-likes'),
-			imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
-
-			let imageLiked = info.likes.includes(getUsername());
-			imageLikes.innerHTML = info.likes.length;
-			imageLikeIcon.setAttribute('liked', imageLiked);
-
-			if (imageLiked)
-				imageLikeIcon.classList.add('dislike');
-
-			var whoLiked = imageBox.querySelector('.who-liked');
-
-			// clear the container
-			whoLiked.innerHTML = '';
-			info.likes.forEach(username => {
-				appendUserInLikes(username, whoLiked);
-			});
-
-			let imageNav = imageBox.querySelector('.image-navigation-container');
-			let imageNavButtons = imageNav.querySelectorAll('.icon-container');
-
-			let downloadImageLink = imageNav.children[0];
-			downloadImageLink.href = `/api/image/get/${id}`;
-
-			let changeVisibilityIcon = imageNavButtons[1].children[0];
-			let value = 'private';
-
-			if (info.public)
-				value = 'public';
-
-			changeVisibilityIcon.src = `static/icons/${value}.png`;
-			imageBox.setAttribute('visibility', value);
-
-			let images = document.getElementById('images');
-			images.appendChild(imageBox);
-			sortImages();
-
-			image.onload = function() {
-				this.style.opacity = '1';
+			else {
+				// we couldn't get any information for this image
+				resolve(null);
 			}
 		}
 	}

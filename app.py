@@ -171,13 +171,13 @@ def verifyCaptcha(captcha_answer, token):
 @app.route("/")
 def index():
     loggedIn = isLoggedIn()
-    return render_template("index.html", visibility="trending",loggedIn=loggedIn)
+    return render_template("index.html", pagetype="index", loggedIn=loggedIn)
 
 
 @app.route("/community")
 def community():
     loggedIn = isLoggedIn()
-    return render_template("community.html", visibility="public", loggedIn=loggedIn)
+    return render_template("community.html", pagetype="community", loggedIn=loggedIn)
 
 
 @app.route("/api/captcha")
@@ -194,27 +194,28 @@ def api_image_list():
     jwtData = decodeFromJWT(token)
     owner = jwtData.get("username")
 
-    forProfile = request.args.get("private", False)
+    whichPage = request.args.get("pagetype", "index")
 
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
             data = []
             images = db.table("images")
 
-            if forProfile and owner:
+            if whichPage == "profile" and owner:
                 data += images.search(Query().owner == owner)
             else:
                 data += images.search(Query().public == True)
 
-            # sort such that most recent images comes first
-            trending = request.args.get("trending", False)
-            if trending:
-                data.sort(key=lambda image: (len(image["likes"]) + len(image["views"]))/2, reverse=True)
-                data = [image.doc_id for image in data]
-                data = data[:6]
-
+            if whichPage == "index":
+                # sort such that images with most likes and views comes first
+                data.sort(
+                    key=lambda image: (len(image["likes"]) + len(image["views"])) / 2,
+                    reverse=True,
+                )
+                data = [image.doc_id for image in data[:4]]
             else:
-                data.sort(key=lambda image: image["timestamp"], reverse=True)    
+                # sort such that most recent images comes first
+                data.sort(key=lambda image: image["timestamp"], reverse=True)
                 data = [image.doc_id for image in data]
 
     return jsonify(data)
@@ -770,7 +771,7 @@ def profile():
         uploads=uploads,
         totalLikes=totalLikes,
         totalViews=totalViews,
-        visibility="private",
+        pagetype="profile",
         loggedIn=True,
     )
 
