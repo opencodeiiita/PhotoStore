@@ -171,7 +171,7 @@ def verifyCaptcha(captcha_answer, token):
 @app.route("/")
 def index():
     loggedIn = isLoggedIn()
-    return render_template("index.html", visibility="main",loggedIn=loggedIn)
+    return render_template("index.html", visibility="trending",loggedIn=loggedIn)
 
 
 @app.route("/community")
@@ -207,7 +207,7 @@ def api_image_list():
                 data += images.search(Query().public == True)
 
             # sort such that most recent images comes first
-            trending = request.args.get("main", False)
+            trending = request.args.get("trending", False)
             if trending:
                 data.sort(key=lambda image: (len(image["likes"]) + len(image["views"]))/2, reverse=True)
                 data = [image.doc_id for image in data]

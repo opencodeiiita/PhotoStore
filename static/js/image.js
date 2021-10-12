@@ -33,8 +33,8 @@ function loadImages() {
 	let type = document.getElementById('images').getAttribute('value');
 	let URL = '/api/image/list';
 
-	if(type === 'main'){
-		URL = `${URL}?main=1`
+	if(type === 'trending'){
+		URL = `${URL}?trending=1`
 	}
 	else if (type === 'private'){
 		URL = `${URL}?private=1`;
