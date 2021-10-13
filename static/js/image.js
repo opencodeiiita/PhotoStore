@@ -19,9 +19,10 @@ function getUsername() {
 }
 
 function appendUserInLikes(username, whoLiked) {
-	const personName = document.createElement('div');
-	personName.classList.add('personNameDiv');
+	const personName = document.createElement('span');
+	personName.classList.add('username');
 	personName.classList.add('overflow-ellipsis');
+	personName.setAttribute('title', username);
 	personName.innerText = username;
 
 	// insert the username into `who-liked` list
@@ -130,6 +131,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				}
 
 				imageTime.innerHTML = info.time;
+				imageTime.setAttribute('title', info.time);
 
 				let imageDescription = imageBox.querySelector('.image-description');
 				imageDescription.innerHTML = info.description;

@@ -3,6 +3,7 @@
 	--icon-size: 2.4em;
 	--avatar-size: 1.6em;
 	--image-size: 18em;
+
 	--accent-color: #f55;
 	--box-bg-color: #1f1f1f;
 	--box-text-color: white;
@@ -693,7 +694,9 @@ a.underline:hover:after {
 
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: start;
+	justify-content: start;
+	gap: 0.4em;
 
 	max-width: 96%;
 	width: 10%;
@@ -706,7 +709,8 @@ a.underline:hover:after {
 	background-color: var(--image-overlay-box-bg-color);
 	color: var(--image-overlay-box-text-color);
 
-	padding: 1em 0;
+	padding: 0.4em 0 0.4em 0.4em;
+
 	overflow-x: hidden;
 	overflow-y: scroll;
 	transition: width var(--transition-duration);
@@ -720,8 +724,7 @@ a.underline:hover:after {
 	width: 0%;
 }
 
-.who-liked .personNameDiv {
-	padding-bottom: 2em;
+.who-liked .username {
 	max-width: 100%;
 }
 
@@ -760,16 +763,5 @@ a.underline:hover:after {
 	.input-container {
 		flex-direction: column;
 		width: 18em;
-	}
-
-	.image-likes-container,
-	.image-views-container {
-		top: 5.1em;
-		font-size: 0.7em;
-		height: 13%;
-	}
-
-	.who-liked {
-		top: 6.01em;
 	}
 }
