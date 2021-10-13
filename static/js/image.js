@@ -31,7 +31,7 @@ function appendUserInLikes(username, whoLiked) {
 function loadImages() {
 	totalViews();
 
-	let pagetype = document.getElementById('images').getAttribute('pagetype');
+	let pagetype = document.getElementById('images').getAttribute('data-pagetype');
 	let URL = '/api/image/list';
 
 	if (pagetype)
@@ -112,7 +112,10 @@ function createImageBox(id, viewingProfile, resolve) {
 
 				// start filling the template
 				let imageBox = cloneTemplate.querySelector('.image-box');
-				imageBox.setAttribute('image_id', id);
+				imageBox.setAttribute('data-id', id);
+				imageBox.setAttribute('data-timestamp', new Date(info.time).getTime() / 1000);
+				imageBox.setAttribute('data-likes', info.likes.length);
+				imageBox.setAttribute('data-views', info.views + info.firstSeen ? 1 : 0);
 
 				let image = imageBox.querySelector('.image');
 				image.src = `/api/image/get/${id}`;
@@ -150,7 +153,7 @@ function createImageBox(id, viewingProfile, resolve) {
 
 				let imageLiked = info.likes.includes(getUsername());
 				imageLikes.innerHTML = info.likes.length;
-				imageLikeIcon.setAttribute('liked', imageLiked);
+				imageLikeIcon.setAttribute('data-liked', imageLiked);
 
 				if (imageLiked)
 					imageLikeIcon.classList.add('dislike');
@@ -176,7 +179,7 @@ function createImageBox(id, viewingProfile, resolve) {
 					value = 'public';
 
 				changeVisibilityIcon.src = `static/icons/${value}.png`;
-				imageBox.setAttribute('visibility', value);
+				imageBox.setAttribute('data-visibility', value);
 
 				image.onload = function() {
 					this.style.opacity = '1';
@@ -222,7 +225,7 @@ function sortImages(lambda, order) {
 
 function makeImagePublic(event) {
 	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	let id = imageBox.getAttribute('image_id');
+	let id = imageBox.getAttribute('data-id');
 
 	// the user might have clicked on the `div`
 	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
@@ -231,7 +234,7 @@ function makeImagePublic(event) {
 		return;
 
 	let img = (event.path || (event.composedPath && event.composedPath()))[0];
-	let value = imageBox.getAttribute('visibility') === 'public' ? 'private' : 'public';
+	let value = imageBox.getAttribute('data-visibility') === 'public' ? 'private' : 'public';
 
 	let json = JSON.stringify({
 		id: id,
@@ -244,7 +247,7 @@ function makeImagePublic(event) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			if (xhr.status === 200) {
-				imageBox.setAttribute('visibility', value);
+				imageBox.setAttribute('data-visibility', value);
 				img.src = `/static/icons/${value}.png`;
 			}
 			else
@@ -263,7 +266,7 @@ function makeImagePublic(event) {
 
 function likeImage(event) {
 	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	let id = imageBox.getAttribute('image_id');
+	let id = imageBox.getAttribute('data-id');
 
 	// the user might have clicked on the `div`
 	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
@@ -273,7 +276,7 @@ function likeImage(event) {
 
 	let likeButton = (event.path || (event.composedPath && event.composedPath()))[1];
 	let likes = (event.path || (event.composedPath && event.composedPath()))[2].children[0];
-	let value = !(likeButton.getAttribute('liked') === 'true');
+	let value = !(likeButton.getAttribute('data-liked') === 'true');
 
 	let json = JSON.stringify({
 		id: id,
@@ -292,7 +295,7 @@ function likeImage(event) {
 				if (numLikes)
 					numLikes.innerHTML = json.totalLikes;
 
-				likeButton.setAttribute('liked', value);
+				likeButton.setAttribute('data-liked', value);
 
 				if (value)
 					likeButton.classList.add('dislike');
@@ -325,7 +328,7 @@ function likeImage(event) {
 
 function deleteImage(event) {
 	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	let id = imageBox.getAttribute('image_id');
+	let id = imageBox.getAttribute('data-id');
 
 	// the user might have clicked on the `div`
 	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
@@ -356,12 +359,16 @@ function deleteImage(event) {
 				imageBox.remove();
 
 				let images = document.getElementById('images');
-				let type = images.getAttribute('value');
+				let pagetype = images.getAttribute('data-pagetype');
 
-				if (type === 'private') {
-					let profileNavInfo = document.querySelector('#numPhotos');
-					let numPhotos = images.children.length - 1; // -1 for the `<template>` child
-					profileNavInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+				if (pagetype === 'profile') {
+					let profileUploadInfo = document.querySelector('#numPhotos'),
+						numPhotos = images.children.length;
+
+					if (numPhotos > 0)
+						profileUploadInfo.innerHTML = `You have uploaded ${numPhotos} photos`;
+					else
+						profileUploadInfo.innerHTML = `You haven't uploaded any photos yet`;
 				}
 			}
 			else
