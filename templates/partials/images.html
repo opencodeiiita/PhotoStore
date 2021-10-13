@@ -1,83 +1,89 @@
 <script src="{{ url_for('static', filename='js/image.js') }}" type="text/javascript" defer async></script>
 
-<div id="images" class="images-container" pagetype="{{ pagetype }}">
-	<template id="image-box-template">
-		<div class="image-box">
-			<img class="image" src="" loading="lazy">
+<!--
+	this is an image template, we will clone it and create images
+	which will be added into the 'images' container
+-->
+<template id="image-box-template">
+	<div class="image-box">
+		<img class="image" src="" loading="lazy">
 
-			<div class="image-overlay-container">
-				<div class="image-info-container">
-					<div class="image-meta">
-						<div class="image-owner overflow-ellipsis">
-							{# owner, on top-left #}
-						</div>
-
-						<div class="image-date">
-							{# date, on top-right #}
-						</div>
+		<div class="image-overlay-container">
+			<div class="image-info-container">
+				<div class="image-meta">
+					<div class="image-owner overflow-ellipsis">
+						{# owner, on top-left #}
 					</div>
 
-					<div class="image-description overflow-ellipsis">
-						{# description #}
+					<div class="image-date">
+						{# date, on top-right #}
 					</div>
 				</div>
 
-				<div class="image-views-container">
-					<div class="image-views overflow-ellipsis">
-						{# views #}
-					</div>
+				<div class="image-description overflow-ellipsis">
+					{# description #}
+				</div>
+			</div>
 
-					<div class="icon-container">
-						<img src="{{ url_for('static', filename='icons/views.png') }}"
-							title="Views of this image"
-						>
-					</div>
+			<div class="image-views-container">
+				<div class="image-views overflow-ellipsis">
+					{# views #}
 				</div>
 
-				<div class="image-likes-container">
-					<div class="image-likes overflow-ellipsis">
-						{# likes #}
-					</div>
+				<div class="icon-container">
+					<img src="{{ url_for('static', filename='icons/views.png') }}"
+						title="Views of this image"
+					>
+				</div>
+			</div>
 
-					<div class="icon-container highlight blue">
-						<img src="{{ url_for('static', filename='icons/like.png') }}"
-							onclick="likeImage(event)"
-							title="Like/Unlike this image"
-						>
-					</div>
+			<div class="image-likes-container">
+				<div class="image-likes overflow-ellipsis">
+					{# likes #}
 				</div>
 
-				<div class="who-liked">
-					{# list of users who liked this image #}
+				<div class="icon-container highlight blue">
+					<img src="{{ url_for('static', filename='icons/like.png') }}"
+						onclick="likeImage(event)"
+						title="Like/Unlike this image"
+					>
+				</div>
+			</div>
+
+			<div class="who-liked">
+				{# list of users who liked this image #}
+			</div>
+
+			<div class="image-navigation-container">
+				{# templates got some issue with events, need to clone elements #}
+				{# hmm, I didn't find any issue as mentioned by Mozilla's documentation #}
+
+				<a href="" title="Download this image" download>
+					<div class="icon-container highlight green">
+						<img src="{{ url_for('static', filename='icons/download.png') }}">
+					</div>
+				</a>
+
+				<div class="icon-container highlight red">
+					<img src=""
+						onclick="makeImagePublic(event)"
+						title="Change visibility to public or private"
+					>
 				</div>
 
-				<div class="image-navigation-container">
-					{# templates got some issue with events, need to clone elements #}
-					{# hmm, I didn't find any issue as mentioned by Mozilla's documentation #}
-
-					<a href="" title="Download this image" download>
-						<div class="icon-container highlight green">
-							<img src="{{ url_for('static', filename='icons/download.png') }}">
-						</div>
-					</a>
-
-					<div class="icon-container highlight red">
-						<img src=""
-							onclick="makeImagePublic(event)"
-							title="Change visibility to public or private"
-						>
-					</div>
-
-					<div class="icon-container highlight red">
-						<img src="{{ url_for('static', filename='icons/delete.png') }}"
-							onclick="deleteImage(event)"
-							title="Delete this image"
-						>
-					</div>
+				<div class="icon-container highlight red">
+					<img src="{{ url_for('static', filename='icons/delete.png') }}"
+						onclick="deleteImage(event)"
+						title="Delete this image"
+					>
 				</div>
 			</div>
 		</div>
-	</template>
+	</div>
+</template>
+
+<div id="images" class="images-container" pagetype="{{ pagetype }}">
+	{# images will be inserted here #}
 </div>
 
 <!--
