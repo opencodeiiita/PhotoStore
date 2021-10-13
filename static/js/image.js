@@ -117,16 +117,16 @@ function createImageBox(id, viewingProfile, resolve) {
 				let image = imageBox.querySelector('.image');
 				image.src = `/api/image/get/${id}`;
 
-				let imageMeta = imageBox.querySelector('.image-meta');
-				let imageOwner = imageMeta.querySelector('.image-owner'),
-				imageDate = imageMeta.querySelector('.image-date');
+				let imageMeta = imageBox.querySelector('.image-meta'),
+					imageOwner = imageMeta.querySelector('.image-owner'),
+					imageTime = imageMeta.querySelector('.image-time');
 
 				if (!viewingProfile) {
 					imageOwner.innerHTML = info.owner;
 					imageOwner.setAttribute('title', info.owner);
 				}
 
-				imageDate.innerHTML = info.date;
+				imageTime.innerHTML = info.time;
 
 				let imageDescription = imageBox.querySelector('.image-description');
 				imageDescription.innerHTML = info.description;

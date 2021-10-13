@@ -292,7 +292,7 @@ def api_image_info(id):
     username = jwtData.get("username")
 
     info = {
-        "date": str(datetime.fromtimestamp(image.get("timestamp"))),
+        "time": str(datetime.fromtimestamp(image.get("timestamp"))),
         "owner": owner,
         "description": image.get("description"),
         "public": public,
@@ -803,7 +803,7 @@ def api_user_info(username):
         return json.dumps(None), 404
 
     info = {
-        "date": str(datetime.fromtimestamp(account.get("timestamp"))),
+        "time": str(datetime.fromtimestamp(account.get("timestamp"))),
         "username": username,
         "likes": totalLikes,
         "views": totalViews,
