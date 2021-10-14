@@ -305,6 +305,7 @@ function likeImage(event) {
 					likeButton.classList.remove('dislike');
 
 				likes.innerHTML = json.likes.length;
+				imageBox.setAttribute('data-likes', json.likes.length);
 
 				var whoLiked = imageBox.querySelector('.who-liked');
 
