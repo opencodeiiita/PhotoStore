@@ -722,6 +722,7 @@ a.underline:hover:after {
 
 .who-liked:empty {
 	width: 0%;
+	padding: 0;
 }
 
 .who-liked .username {
