@@ -124,22 +124,30 @@ function createImageBox(id, viewingProfile, resolve) {
 	xhr.send();
 }
 
-function sortImages(lambda) {
+function sortImages(lambda, order) {
 	// lambda = (imageBox) => imageBox.getAttribute('image_id')
+	// order: 1 (ASC) or -1 (DESC)
 
-	let sort_by_id = function(a, b) {
+	if (!order)
+		order = -1;
+
+	let comparator = function(a, b) {
 		let a_id = lambda(a), b_id = lambda(b);
 
 		if (a_id < b_id)
-			return 1;
-		if (a_id > b_id)
 			return -1;
+
+		if (a_id > b_id)
+			return 1;
 
 		return 0;
 	}
 
-	let images = $('#images > .image-box').get();
-	images.sort(sort_by_id);
+	let images = document.getElementById('images'),
+		imagesArray = Array.from(images.children);
+
+	let sortedImages = imagesArray.sort(comparator);
+	sortedImages.forEach(image => images.appendChild(image));
 }
 
 function makeImagePublic(event) {
