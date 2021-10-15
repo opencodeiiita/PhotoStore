@@ -471,7 +471,7 @@ def avatar():
             else:
                 flash("Invalid request!", "error")
         except RequestEntityTooLarge as exc:
-            useragent = request.headers.get("User-Agent", "")
+            useragent = re.sub('[{}]', '', request.headers.get("User-Agent", ""))
             contentlength = request.headers.get("Content-Length", "")
             sizelimit = app.config["MAX_CONTENT_LENGTH"]
 
@@ -780,7 +780,7 @@ def upload():
                 flash("Invalid request!", "error")
 
         except RequestEntityTooLarge as exc:
-            useragent = request.headers.get("User-Agent", "")
+            useragent = re.sub('[{}]', '', request.headers.get("User-Agent", ""))
             contentlength = request.headers.get("Content-Length", "")
             sizelimit = app.config["MAX_CONTENT_LENGTH"]
 
