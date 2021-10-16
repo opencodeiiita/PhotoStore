@@ -225,6 +225,22 @@ function sortImages(lambda, order) {
 	sortedImages.forEach(image => images.appendChild(image));
 }
 
+function setAtribute(setattribute){
+	var attribute = document.querySelector('#attribute').value
+	var order = document.querySelector('#order').value
+	attribute = setattribute
+	sortImages((imageBox) => parseInt(imageBox.getAttribute(attribute)),order)
+}
+
+function setOrder(setorder){
+	var attribute = document.querySelector('#attribute').value
+	var order = document.querySelector('#order').value
+	order = setorder
+	sortImages((imageBox) => parseInt(imageBox.getAttribute(attribute)),order)
+}
+
+
+
 function makeImagePublic(event) {
 	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
 	let id = imageBox.getAttribute('data-id');
