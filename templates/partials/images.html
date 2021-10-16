@@ -5,9 +5,9 @@
 	  <button class="dropbtn" id="attribute" value="data-timestamp">Sort by 
 	  </button>
 	  <div class="dropdown-content" >
-		<a href="#" onclick="setAtribute('data-likes')" >Likes</a>
-		<a href="#" onclick="setAtribute('data-timestamp')">Time created</a>
-		<a href="#" onclick="setAtribute('data-views')">Views</a>
+		<a href="#" class="data-likes" onclick="setAtribute('data-likes')" >Likes</a>
+		<a href="#" class="data-timestamp" style="color: red;" onclick="setAtribute('data-timestamp')">Time created</a>
+		<a href="#" class="data-views" onclick="setAtribute('data-views')">Views</a>
 	  </div>
 	</div> 
 
@@ -15,8 +15,8 @@
 		<button class="dropbtn" id="order" value="-1">Order 
 		</button>
 		<div class="dropdown-content" >
-		  <a href="#" onclick="setOrder(1)" >Ascending</a>
-		  <a href="#" onclick="setOrder(-1)">Descending</a>
+		  <a href="#" class="ascending" onclick="setOrder(1)" >Ascending</a>
+		  <a href="#" class="descending" style="color: red;" onclick="setOrder(-1)">Descending</a>
 		</div>
 	  </div> 
 </div>

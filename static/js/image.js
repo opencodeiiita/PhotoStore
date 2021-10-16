@@ -227,16 +227,20 @@ function sortImages(lambda, order) {
 
 function setAtribute(setattribute){
 	var attribute = document.querySelector('#attribute').value
+	document.querySelector(`.${attribute}`).style.color = "black"
+	document.querySelector(`.${setattribute}`).style.color = "red"
+	document.querySelector('#attribute').value = setattribute
 	var order = document.querySelector('#order').value
-	attribute = setattribute
-	sortImages((imageBox) => parseInt(imageBox.getAttribute(attribute)),order)
+	sortImages((imageBox) => parseInt(imageBox.getAttribute(setattribute)),order)
 }
 
 function setOrder(setorder){
-	var attribute = document.querySelector('#attribute').value
 	var order = document.querySelector('#order').value
-	order = setorder
-	sortImages((imageBox) => parseInt(imageBox.getAttribute(attribute)),order)
+	document.querySelector(`.${order == 1 ? 'ascending': 'descending'}`).style.color = "black"
+	document.querySelector(`.${setorder == 1 ? 'ascending': 'descending'}`).style.color = "red"
+	var attribute = document.querySelector('#attribute').value
+	document.querySelector('#order').value = setorder
+	sortImages((imageBox) => parseInt(imageBox.getAttribute(attribute)),setorder)
 }
 
 
