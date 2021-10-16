@@ -24,7 +24,6 @@ from flask import (
     jsonify,
     render_template,
     make_response,
-    render_template_string,
     send_from_directory,
 )
 from werkzeug.exceptions import RequestEntityTooLarge
@@ -503,17 +502,12 @@ def avatar():
             contentlength = request.headers.get("Content-Length", "")
             sizelimit = app.config["MAX_CONTENT_LENGTH"]
 
-            errors = list(
-                map(
-                    render_template_string,
-                    [
-                        "Woah! Your file is too powerful!",
-                        f"User-Agent: {useragent}",
-                        f"Content-Length: {contentlength}",
-                        f"Size Limit: {sizelimit} bytes",
-                    ],
-                )
-            )
+            errors = [
+                "Woah! Your file is too powerful!",
+                f"User-Agent: {useragent}",
+                f"Content-Length: {contentlength}",
+                f"Size Limit: {sizelimit} bytes",
+            ]
 
             return render_template(
                 "layouts/error.html", errors=errors, returnURL=returnURL, loggedIn=True
@@ -858,17 +852,12 @@ def upload():
             contentlength = request.headers.get("Content-Length", "")
             sizelimit = app.config["MAX_CONTENT_LENGTH"]
 
-            errors = list(
-                map(
-                    render_template_string,
-                    [
-                        "Woah! Your file is too powerful!",
-                        f"User-Agent: {useragent}",
-                        f"Content-Length: {contentlength}",
-                        f"Size Limit: {sizelimit} bytes",
-                    ],
-                )
-            )
+            errors = [
+                "Woah! Your file is too powerful!",
+                f"User-Agent: {useragent}",
+                f"Content-Length: {contentlength}",
+                f"Size Limit: {sizelimit} bytes",
+            ]
 
             return render_template(
                 "layouts/error.html",
