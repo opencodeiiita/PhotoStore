@@ -250,10 +250,17 @@ def api_image_get(id):
     if not image:
         return "", 404
 
+    public = image.get("public")
+    owner = image.get("owner")
     filename = image.get("filename")
 
     if not filename:
         return "", 404
+
+    # check if the client has access to view this image or not
+    # this check prevents IDOR
+    if not owner == username and not public:
+        return "", 403
 
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
