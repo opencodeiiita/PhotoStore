@@ -37,6 +37,7 @@ from flask_pretty import Prettify
 
 # to sanitize input
 import re
+from markupsafe import escape
 
 # for session tokens
 import jwt
@@ -837,7 +838,10 @@ def upload():
     if request.method == "POST":
         # the error will be triggered when we first access the `resquest` object
         try:
-            description = request.form.get("description", "")
+            # this prevents HTML code from being stored
+            # directly into the database
+            # thus preventing stored XSS vulnerability
+            description = escape(request.form.get("description", ""))
             file = None
 
             if "fileToUpload" in request.files:
