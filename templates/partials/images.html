@@ -1,9 +1,31 @@
 <script src="{{ url_for('static', filename='js/image.js') }}" type="text/javascript" defer></script>
 
+<div class="navbar">
+	<div class="dropdown" >
+	  <button class="dropbtn" id="attribute" value="data-timestamp">Sort by 
+	  </button>
+	  <div class="dropdown-content" >
+		<a href="#" class="data-likes" onclick="setAtribute('data-likes')" >Likes</a>
+		<a href="#" class="data-timestamp" style="color: red;" onclick="setAtribute('data-timestamp')">Time created</a>
+		<a href="#" class="data-views" onclick="setAtribute('data-views')">Views</a>
+	  </div>
+	</div> 
+
+	<div class="dropdown" >
+		<button class="dropbtn" id="order" value="-1">Order 
+		</button>
+		<div class="dropdown-content" >
+		  <a href="#" class="ascending" onclick="setOrder(1)" >Ascending</a>
+		  <a href="#" class="descending" style="color: red;" onclick="setOrder(-1)">Descending</a>
+		</div>
+	  </div> 
+</div>
+
 <!--
 	this is an image template, we will clone it and create images
 	which will be added into the 'images' container
 -->
+
 <template id="image-box-template">
 	<div class="image-box">
 		<img class="image" src="" loading="lazy">
