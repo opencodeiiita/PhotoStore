@@ -5,16 +5,15 @@ Profile
 {% endblock title %}
 
 {% block heading %}
+<script src="{{ url_for('static', filename='js/profile.js') }}" type="text/javascript" defer></script>
+
 <div class="profile-container">
 	<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
 
 	<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
-		<input id="avatarChange" style="display: none;" type=file name="avatar"
-			accept="image/*" onchange="$('#avatarForm').submit()"
-		>
-		<div class="profile-image" onclick="$('#avatarChange').trigger('click')"
-			title="Change avatar"
-		>
+		<input id="avatarChange" type=file name="avatar" accept="image/*">
+
+		<div id="profile-image" title="Change avatar">
 			<img src="{{ url_for('avatar') }}">
 		</div>
 	</form>

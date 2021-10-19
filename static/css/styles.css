@@ -286,7 +286,11 @@ a.underline:hover:after {
 	gap: 0.4em;
 }
 
-.profile-image {
+#avatarChange {
+	display: none;
+}
+
+#profile-image {
 	display: flex;
 	width: var(--avatar-size);
 	height: var(--avatar-size);
@@ -296,12 +300,12 @@ a.underline:hover:after {
 	transition: border var(--transition-duration);
 }
 
-.profile-image:hover {
+#profile-image:hover {
 	border: 0.1em black solid;
 	cursor: pointer;
 }
 
-.profile-image img {
+#profile-image img {
 	border-radius: 100%;
 	aspect-ratio: 1;
 }
