@@ -15,7 +15,6 @@ Login
 		<input id="username" type=text name="username"
 			placeholder="Username"
 			minlength="4" maxlength="32"
-			onkeyup="this.value = this.value.replace(/[^0-9A-Z_]+/gi, '');"
 			title="Only digits, letters and underscores are allowed!"
 			required
 		>
@@ -32,6 +31,7 @@ Login
 	</div>
 
 	{% include 'partials/captcha.html' %}
+
 	<div class="input-container button green">
 		<input type=submit value="Submit">
 	</div>
