@@ -95,6 +95,15 @@ footer {
 	cursor: pointer;
 }
 
+.horizontal-separator {
+	width: 100%;
+	height: 0.2em;
+	margin: 1em 0;
+	border: none;
+	border-radius: 0.2em;
+	background: var(--box-bg-color);
+}
+
 .navigation-buttons-container {
 	display: inline-flex;
 	flex-wrap: wrap;
