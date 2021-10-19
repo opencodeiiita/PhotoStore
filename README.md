@@ -1,6 +1,10 @@
 # PhotoStore
 A **buggy** web application to store and share your photos
 
+## Note
+All Cyber Security issues have been solved and thus `main` branch is now archived!<br>
+If you find any Issues, feel free to submit one.
+
 ## Before you start
 This project is divided into two branches
 - `main` - Cyber Security
