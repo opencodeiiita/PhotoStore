@@ -765,6 +765,11 @@ a.underline:hover:after {
 	background: #555;
 }
 
+#images-message {
+	padding: 0.5em 0;
+}
+
+
 /*
  * media queries here!
  */
