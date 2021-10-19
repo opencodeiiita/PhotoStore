@@ -273,14 +273,10 @@ def api_image_get(id):
 
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
-    if not os.path.isfile(filepath):
-        return "", 404
+    if os.path.isfile(filepath):
+        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-    # set the correct CSP to tell client's broswer
-    # to not execute any scripts (XSS using malicious SVG images)
-    resp = make_response(send_from_directory(app.config["UPLOAD_FOLDER"], filename))
-    resp.headers["Content-Security-Policy"] = "default-src 'self'"
-    return resp
+    return "", 404
 
 
 @app.route("/api/image/info/<id>")
