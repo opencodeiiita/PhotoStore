@@ -502,7 +502,6 @@ a.underline:hover:after {
 	border-radius: 0.5em;
 	
 	box-shadow: 0 0.1em 0.2em black;
-	transform: translate(0, 0);
 }
 
 .me-want-cookies-container.disabled {
@@ -518,7 +517,7 @@ a.underline:hover:after {
 	border-radius: 0.8em;
 	margin-bottom: 0.5em;
 
-	transition: var(--transition-duration);
+	transition: transform var(--transition-duration), box-shadow var(--transition-duration);
 }
 
 .me-want-cookies-container .title:hover {
@@ -753,12 +752,12 @@ a.underline:hover:after {
 
 ::-webkit-scrollbar-track {
 	background: #f1f1f1;
-  }
+}
 
  /* Handle */
 ::-webkit-scrollbar-thumb {
 	background: #888;
-  }
+}
 
  /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
@@ -774,14 +773,21 @@ a.underline:hover:after {
  * media queries here!
  */
 
-@media only screen and (max-width: 660px) {
+@media only screen and (max-width: 720px) {
+	:root {
+		font-size: 1.2rem;
+	}
+
+}
+
+@media only screen and (max-width: 560px) {
 	:root {
 		font-size: 0.8rem;
 	}
 
 	.wobbly-image-box {
 		width: 80%;
-		padding: 6em 0;
+		padding: 4em 0;
 	}
 
 	.input-container {
