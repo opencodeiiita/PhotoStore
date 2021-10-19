@@ -1,24 +1,25 @@
 <script src="{{ url_for('static', filename='js/image.js') }}" type="text/javascript" defer></script>
+<script src="{{ url_for('static', filename='js/sort-images.js') }}" type="text/javascript" defer></script>
 
-<div class="navbar">
-	<div class="dropdown" >
-	  <button class="dropbtn" id="attribute" value="data-timestamp">Sort by 
-	  </button>
-	  <div class="dropdown-content" >
-		<a href="#" class="data-likes" onclick="setAtribute('data-likes')" >Likes</a>
-		<a href="#" class="data-timestamp" style="color: red;" onclick="setAtribute('data-timestamp')">Time created</a>
-		<a href="#" class="data-views" onclick="setAtribute('data-views')">Views</a>
-	  </div>
-	</div> 
+<div id="sort-by">
+	<div id="sort-by-field" class="dropdown">
+		<button class="dropdown-button" value="data-timestamp">Sort by</button>
 
-	<div class="dropdown" >
-		<button class="dropbtn" id="order" value="-1">Order 
-		</button>
-		<div class="dropdown-content" >
-		  <a href="#" class="ascending" onclick="setOrder(1)" >Ascending</a>
-		  <a href="#" class="descending" style="color: red;" onclick="setOrder(-1)">Descending</a>
+		<div class="dropdown-list">
+			<li data-value="data-likes">Likes</li>
+			<li class="selected" data-value="data-timestamp">Time created</li>
+			<li data-value="data-views">Views</li>
 		</div>
-	  </div> 
+	</div>
+
+	<div id="sort-by-order" class="dropdown">
+		<button class="dropdown-button" value="-1">Order</button>
+
+		<div class="dropdown-list">
+			<li data-value="1" >Ascending</li>
+			<li class="selected" data-value="-1">Descending</li>
+		</div>
+	</div>
 </div>
 
 <!--

@@ -796,67 +796,54 @@ a.underline:hover:after {
 	}
 }
 
-.navbar {
+
+/* for sorting dropdown menu */
+
+#sort-by {
 	overflow: hidden;
-	background-color: #333;
-  }
-  
-  .navbar a {
-	float: left;
-	font-size: 16px;
-	color: white;
-	text-align: center;
-	padding: 14px 16px;
-	text-decoration: none;
-  }
-  
-  .dropdown {
+	padding: 0.5em 0;
+}
+
+#sort-by .dropdown {
 	float: left;
 	overflow: hidden;
-  }
-  
-  .dropdown .dropbtn {
-	font-size: 16px;  
+}
+
+#sort-by .dropdown-button {
+	font-size: 1em;
+	padding: 0.4em;
 	border: none;
 	outline: none;
-	color: white;
-	padding: 14px 16px;
-	background-color: inherit;
-	font-family: inherit;
-	margin: 0;
-  }
-  
-  .navbar a:hover, .dropdown:hover .dropbtn {
-	background-color: red;
-  }
-  
-  .dropdown-content {
-	display: none;
+	color: var(--box-text-color);
+	background-color: var(--box-bg-color);
+}
+
+#sort-by .dropdown:hover .dropdown-button {
+	background-color: var(--accent-color);
+}
+
+#sort-by .dropdown-list {
 	position: absolute;
+	display: none;
 	background-color: #f9f9f9;
-	min-width: 160px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0 8px 8px #0007;
 	z-index: 2;
-  }
-  
-  .dropdown-content a {
-	float: none;
+}
+
+#sort-by .dropdown:hover .dropdown-list {
+	display: block;
+}
+
+#sort-by li {
+	font-size: 0.8em;
+	padding: 0.4em;
 	color: black;
-	padding: 12px 16px;
-	text-decoration: none;
-	display: block;
-	text-align: left;
-  }
-  
-  .dropdown-content a:hover {
+}
+
+#sort-by li:hover {
 	background-color: #ddd;
-  }
-  
-  .dropdown:hover .dropdown-content {
-	display: block;
-  }
-  .main{
-	  display: inline-flex;
-	  padding-right: 200px;
-  }
-  
+}
+
+#sort-by li.selected {
+	color: var(--accent-color);
+}

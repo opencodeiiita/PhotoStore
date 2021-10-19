@@ -199,52 +199,6 @@ function createImageBox(id, viewingProfile, resolve) {
 	xhr.send();
 }
 
-function sortImages(lambda, order) {
-	// lambda = (imageBox) => imageBox.getAttribute('data-id')
-	// order: 1 (ASC) or -1 (DESC)
-
-	if (!order)
-		order = -1;
-
-	let comparator = function(a, b) {
-		let a_id = order * lambda(a), b_id = order * lambda(b);
-
-		if (a_id < b_id)
-			return -1;
-
-		if (a_id > b_id)
-			return 1;
-
-		return 0;
-	}
-
-	let images = document.getElementById('images'),
-		imagesArray = Array.from(images.children);
-
-	let sortedImages = imagesArray.sort(comparator);
-	sortedImages.forEach(image => images.appendChild(image));
-}
-
-function setAtribute(setattribute){
-	var attribute = document.querySelector('#attribute').value
-	document.querySelector(`.${attribute}`).style.color = "black"
-	document.querySelector(`.${setattribute}`).style.color = "red"
-	document.querySelector('#attribute').value = setattribute
-	var order = document.querySelector('#order').value
-	sortImages((imageBox) => parseInt(imageBox.getAttribute(setattribute)),order)
-}
-
-function setOrder(setorder){
-	var order = document.querySelector('#order').value
-	document.querySelector(`.${order == 1 ? 'ascending': 'descending'}`).style.color = "black"
-	document.querySelector(`.${setorder == 1 ? 'ascending': 'descending'}`).style.color = "red"
-	var attribute = document.querySelector('#attribute').value
-	document.querySelector('#order').value = setorder
-	sortImages((imageBox) => parseInt(imageBox.getAttribute(attribute)),setorder)
-}
-
-
-
 function makeImagePublic(event) {
 	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
 	let id = imageBox.getAttribute('data-id');
