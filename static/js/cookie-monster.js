@@ -1,24 +1,29 @@
 $(document).ready(() => {
-	let cookiemonster = document.getElementById('cookie-monster');
+	let cookieMonster = $('#cookie-monster')[0];
 
-	if (cookiemonster) {
+	if (cookieMonster) {
 		if (localStorage.cookieConsent === 'accepted') {
-			cookiemonster.classList.add('disabled');
+			cookieMonster.classList.add('disabled');
 		}
 		else {
-			cookiemonster.classList.remove('disabled');
+			cookieMonster.classList.remove('disabled');
 		}
 	}
+
+	$(cookieMonster)
+		.on('click', acceptCookieMonster)
+		.on('mousemove', grabHimCookieMonster)
+		.on('mouseleave', stopCookieMonster_thatsEnough);
 });
 
 function acceptCookieMonster() {
-	let cookiemonster = document.getElementById('cookie-monster');
+	let cookiemonster = $('#cookie-monster')[0];
 	localStorage.cookieConsent = 'accepted';
 	cookiemonster.remove();
 }
 
 function grabHimCookieMonster(event) {
-	let cmbutton = document.getElementById('cookie-monster-button');
+	let cmbutton = $('#cookie-monster-button')[0];
 	let rect = cmbutton.getBoundingClientRect();
 	let mouseX = event.clientX, mouseY = event.clientY;
 
@@ -32,7 +37,7 @@ function grabHimCookieMonster(event) {
 }
 
 function stopCookieMonster_thatsEnough() {
-	let cmbutton = document.getElementById('cookie-monster-button').style = "";
+	let cmbutton = $('#cookie-monster-button')[0].style = "";
 }
 
 function constrain(t, min, max) {

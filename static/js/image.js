@@ -32,7 +32,7 @@ function appendUserInLikes(username, whoLiked) {
 function loadImages() {
 	totalViews();
 
-	let pagetype = document.getElementById('images').getAttribute('data-pagetype');
+	let pagetype = $('#images')[0].getAttribute('data-pagetype');
 	let URL = '/api/image/list';
 
 	if (pagetype)
@@ -44,9 +44,9 @@ function loadImages() {
 	xhr.onreadystatechange = async function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			let imageList = JSON.parse(xhr.responseText),
-				profileUploadInfo = document.querySelector('#numPhotos'),
-				images = document.getElementById('images'),
-				imagesMessage = document.getElementById('images-message');
+				profileUploadInfo = $('#numPhotos')[0],
+				images = $('#images')[0],
+				imagesMessage = $('#images-message')[0];
 
 			if (imageList.length > 0) {
 				if (profileUploadInfo)
@@ -87,7 +87,7 @@ function totalViews(){
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			let info = JSON.parse(xhr.responseText);
-			let numViews = document.getElementById('numViews');
+			let numViews = $('#numViews')[0];
 
 			if (numViews)
 				numViews.innerHTML = parseInt(info.views);
@@ -108,7 +108,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				let info = JSON.parse(xhr.responseText);
 
 				// create a clone from our template
-				let imageTemplate = document.getElementById('image-box-template');
+				let imageTemplate = $('#image-box-template')[0];
 				let cloneTemplate = imageTemplate.content.cloneNode(true);
 
 				// start filling the template
@@ -141,7 +141,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				let imageViews = imageViewsContainer.querySelector('.image-views');
 				imageViews.innerHTML = info.views;
 
-				let numViews = document.getElementById('numViews');
+				let numViews = $('#numViews')[0];
 
 				if (numViews && info.firstSeen) {
 					// because we will be viewing it now
@@ -152,6 +152,9 @@ function createImageBox(id, viewingProfile, resolve) {
 				let imageLikesContainer = imageBox.querySelector('.image-likes-container');
 				let imageLikes = imageLikesContainer.querySelector('.image-likes'),
 				imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
+				$(imageLikeIcon).on('click', (event) => {
+					likeImage(event.originalEvent);
+				});
 
 				let imageLiked = info.likes.includes(getUsername());
 				imageLikes.innerHTML = info.likes.length;
@@ -174,7 +177,9 @@ function createImageBox(id, viewingProfile, resolve) {
 				let downloadImageLink = imageNav.children[0];
 				downloadImageLink.href = `/api/image/get/${id}`;
 
-				let changeVisibilityIcon = imageNavButtons[1].children[0];
+				let changeVisibilityIcon = imageNavButtons[1].children[0],
+					deleteImageIcon = imageNavButtons[1].children[1];
+
 				let value = 'private';
 
 				if (info.public)
@@ -182,6 +187,13 @@ function createImageBox(id, viewingProfile, resolve) {
 
 				changeVisibilityIcon.src = `static/icons/${value}.png`;
 				imageBox.setAttribute('data-visibility', value);
+
+				$(changeVisibilityIcon).on('click', (event) => {
+					makeImagePublic(event.originalEvent);
+				});
+				$(deleteImageIcon).on('click', (event) => {
+					deleteImage(event.originalEvent);
+				});
 
 				image.onload = function() {
 					this.style.opacity = '1';
@@ -267,7 +279,7 @@ function likeImage(event) {
 			if (xhr.status === 200) {
 				let json = JSON.parse(xhr.responseText);
 
-				let numLikes = document.getElementById('numLikes');
+				let numLikes = $('#numLikes')[0];
 				if (numLikes)
 					numLikes.innerHTML = json.totalLikes;
 
@@ -325,21 +337,21 @@ function deleteImage(event) {
 			if (xhr.status === 200) {
 				let json = JSON.parse(xhr.responseText);
 
-				let numLikes = document.getElementById('numLikes');
+				let numLikes = $('#numLikes')[0];
 				if (numLikes)
 					numLikes.innerHTML = json.totalLikes;
 
-				let numViews = document.getElementById('numViews');
+				let numViews = $('#numViews')[0];
 				if (numViews)
 					numViews.innerHTML = json.totalViews;
 
 				imageBox.remove();
 
-				let images = document.getElementById('images');
+				let images = $('#images')[0];
 				let pagetype = images.getAttribute('data-pagetype');
 
 				if (pagetype === 'profile') {
-					let profileUploadInfo = document.querySelector('#numPhotos'),
+					let profileUploadInfo = $('#numPhotos')[0],
 						numPhotos = images.children.length;
 
 					if (numPhotos > 0)

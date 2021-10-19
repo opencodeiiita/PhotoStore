@@ -1,7 +1,11 @@
-$(document).ready(loadCaptcha);
+$(document).ready(() => {
+	$('#captcha-reload').on('click', loadCaptcha);
+	loadCaptcha();
+});
 
 function loadCaptcha() {
-	let captchaReload = document.getElementById('captcha-reload');
+	let captchaReload = $('#captcha-reload')[0];
+
 	if (captchaReload.classList.contains('loading'))
 		return;
 
@@ -14,13 +18,12 @@ function loadCaptcha() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			let captcha = JSON.parse(xhr.responseText);
 
-			let captchaImage = document.getElementById('captcha-image');
+			let captchaImage = $('#captcha-image')[0];
 			captchaImage.src = `data:image/png;base64,${captcha.b64}`;
 
-			let captchaJWT = document.getElementById('captcha-jwt');
+			let captchaJWT = $('#captcha-jwt')[0];
 			captchaJWT.value = captcha.jwt;
 
-			let captchaReload = document.getElementById('captcha-reload');
 			captchaReload.classList.remove('loading');
 		}
 	};
