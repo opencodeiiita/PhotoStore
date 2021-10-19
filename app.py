@@ -27,6 +27,7 @@ from flask import (
     send_from_directory,
 )
 from werkzeug.exceptions import RequestEntityTooLarge
+from flask_talisman import Talisman
 
 # we will be using hashes
 # from werkzeug.utils import secure_filename
@@ -68,6 +69,14 @@ app.config["CAPTCHA_EXPIRE_SECONDS"] = 5 * 60  # 5 minutes
 app.config["MAX_CONTENT_LENGTH"] = 1 * 1000 * 1000  # 1MB limit
 app.config["DATABASE"] = "photostore.db"
 app.config["USE_CAPTCHA"] = False
+
+# apply Talisman
+csp = {
+    "default-src": "'self'",
+    "img-src": "'self' data:"
+}
+
+talisman = Talisman(app, force_https=False, content_security_policy=csp)
 
 # for CAPTCHA
 captcha = ImageCaptcha()
