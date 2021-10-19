@@ -494,7 +494,7 @@ def avatar():
 
         try:
             if "avatar" in request.files:
-                file = request.files["avatar"]
+                file = request.files.get("avatar")
             else:
                 flash("Invalid request!", "error")
         except RequestEntityTooLarge as exc:
@@ -843,7 +843,7 @@ def upload():
             file = None
 
             if "fileToUpload" in request.files:
-                file = request.files["fileToUpload"]
+                file = request.files.get("fileToUpload")
             else:
                 flash("Invalid request!", "error")
 
