@@ -28,9 +28,7 @@
 			</div>
 
 			{% for error in errors %}
-			<span style="padding-bottom: 0.2em;">
-			{{ error }}
-			</span>
+			<span class="error">{{ error }}</span>
 			{% endfor %}
 
 			<a href="{{ returnURL }}">Go back</a>

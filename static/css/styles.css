@@ -104,6 +104,10 @@ footer {
 	background: var(--box-bg-color);
 }
 
+.error {
+	padding-bottom: 0.2em;
+}
+
 .navigation-buttons-container {
 	display: inline-flex;
 	flex-wrap: wrap;
