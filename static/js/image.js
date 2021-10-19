@@ -116,7 +116,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				imageBox.setAttribute('data-id', id);
 				imageBox.setAttribute('data-timestamp', new Date(info.time).getTime() / 1000);
 				imageBox.setAttribute('data-likes', info.likes.length);
-				imageBox.setAttribute('data-views', info.views + info.firstSeen ? 1 : 0);
+				imageBox.setAttribute('data-views', info.views + (info.firstSeen ? 1 : 0));
 
 				let image = imageBox.querySelector('.image');
 				image.src = `/api/image/get/${id}`;
