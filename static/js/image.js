@@ -139,18 +139,15 @@ function createImageBox(id, viewingProfile, resolve) {
 
 				let imageViewsContainer = imageBox.querySelector('.image-views-container');
 				let imageViews = imageViewsContainer.querySelector('.image-views');
-				imageViews.innerHTML = info.views;
+				imageViews.innerHTML = info.views + (info.firstSeen ? 1 : 0);
 
 				let numViews = $('#numViews')[0];
-
-				if (numViews && info.firstSeen) {
-					// because we will be viewing it now
-					imageViews.innerHTML = parseInt(imageViews.innerHTML) + 1;
+				if (numViews && info.firstSeen)
 					numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
-				}
 
 				let imageLikesContainer = imageBox.querySelector('.image-likes-container');
 				let imageLikes = imageLikesContainer.querySelector('.image-likes'),
+
 				imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
 				$(imageLikeIcon).on('click', (event) => {
 					likeImage(event.originalEvent);
@@ -178,12 +175,9 @@ function createImageBox(id, viewingProfile, resolve) {
 				downloadImageLink.href = `/api/image/get/${id}`;
 
 				let changeVisibilityIcon = imageNavButtons[1].children[0],
-					deleteImageIcon = imageNavButtons[1].children[1];
+					deleteImageIcon = imageNavButtons[2].children[0];
 
-				let value = 'private';
-
-				if (info.public)
-					value = 'public';
+				let value = info.public ? 'public' : 'private';
 
 				changeVisibilityIcon.src = `static/icons/${value}.png`;
 				imageBox.setAttribute('data-visibility', value);
@@ -191,6 +185,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				$(changeVisibilityIcon).on('click', (event) => {
 					makeImagePublic(event.originalEvent);
 				});
+
 				$(deleteImageIcon).on('click', (event) => {
 					deleteImage(event.originalEvent);
 				});
