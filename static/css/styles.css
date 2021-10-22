@@ -696,6 +696,11 @@ a.underline:hover:after {
  * current PNG icons aren't clearly visible for `var(--box-bg-color)`
  */
 
+ #comment-icon{
+	width: 80%; 
+	height: 80%;
+ }
+
 .image-navigation-container {
 	position: absolute;
 	bottom: 0;
@@ -750,7 +755,7 @@ a.underline:hover:after {
 }
 
 .who-liked:hover , .who-commented:hover{
-	width: 100%;
+	width: 85%;
 }
 
 .who-liked:empty ,.who-commented:empty{
@@ -784,7 +789,12 @@ a.underline:hover:after {
 	padding: 0.5em 0;
 }
 
-
+.main-comment{
+	height: 27px;
+}
+.scroll-comment{
+	height: 90px;
+}
 /*
  * media queries here!
  */

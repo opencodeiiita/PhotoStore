@@ -32,17 +32,16 @@ function appendUserInLikes(username, whoLiked) {
 function appendComment(comment, whoCommented) {
 	const personName = document.createElement('span');
 	personName.classList.add('main-comment');
-	personName.classList.add('overflow-ellipsis');
 	personName.setAttribute('title', comment.comment);
 	personName.innerHTML = comment.comment;
 	personName.addEventListener("mouseover",function(){
-		personName.style.height = "90px"
+		personName.className = 'scroll-comment'
 		personName.innerHTML = `Username: ${comment.username} <br>
 								Comment: ${comment.comment} <br>
-								Time: ${new Date(comment.timestamp).getTime()}` 
+								Time: ${new Date(comment.timestamp)/ 1000}` 
 	})
 	personName.addEventListener("mouseout",function(){
-		personName.style.height = "27px"
+		personName.className = 'main-comment'
 		personName.innerHTML = comment.comment
 	})
 	whoCommented.appendChild(personName);
@@ -363,7 +362,8 @@ function postComment(event){
 
 	let value = imageBox.querySelector('.input-comment-box').value
 	if(!value){
-		alert("Cannot upload a empty comment")
+		alert("Cannot post a empty comment")
+		return
 	}
 	
 	let json = JSON.stringify({

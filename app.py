@@ -76,7 +76,7 @@ csp = {
     "img-src": "'self' data:"
 }
 
-# talisman = Talisman(app, force_https=False, content_security_policy=csp)
+talisman = Talisman(app, force_https=False, content_security_policy=csp)
 
 # for CAPTCHA
 captcha = ImageCaptcha()
@@ -490,9 +490,9 @@ def api_image_comment():
     # except (JSONDecodeError, TypeError, ValueError):
     except Exception as e:
         id = None
-        value = False
+        value = ''
         
-    if not id:
+    if not id or not value:
         return json.dumps(None), 404
 
     token = request.cookies.get("jwt")
