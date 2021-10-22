@@ -629,7 +629,8 @@ a.underline:hover:after {
 }
 
 .image-views-container,
-.image-likes-container {
+.image-likes-container,
+.image-comments-container {
 	position: absolute;
 
 	display: flex;
@@ -638,7 +639,7 @@ a.underline:hover:after {
 	justify-content: space-around;
 	gap: 0.4em;
 
-	min-width: 40%;
+	min-width: 27%;
 	max-width: 48%;
 
 	height: 2.8em;
@@ -650,14 +651,26 @@ a.underline:hover:after {
 	color: var(--image-overlay-box-text-color);
 }
 
+.comment-box{
+	display: none;
+	margin-top: 100%;
+	z-index: 10;
+}
+
+
 .image-views-container {
 	border-radius: 0 0.4em 0.4em 0;
-	left: 0;
+	left: 37%;
 }
 
 .image-likes-container {
 	border-radius: 0.4em 0 0 0.4em;
 	right: 0;
+}
+
+.image-comments-container {
+	border-radius: 0.4em 0 0 0.4em;
+	left: 0;	
 }
 
 .image-views {
@@ -706,7 +719,7 @@ a.underline:hover:after {
 	border-radius: 0 0 0.4em 0.4em;
 }
 
-.who-liked {
+.who-liked , .who-commented{
 	position: absolute;
 
 	display: flex;
@@ -732,21 +745,24 @@ a.underline:hover:after {
 	overflow-y: scroll;
 	transition: width var(--transition-duration);
 }
+.who-commented{
+	left: 0;
+}
 
-.who-liked:hover {
+.who-liked:hover , .who-commented:hover{
 	width: 100%;
 }
 
-.who-liked:empty {
+.who-liked:empty ,.who-commented:empty{
 	width: 0%;
 	padding: 0;
 }
 
-.who-liked .username {
+.who-liked .username , .who-commented .username{
 	max-width: 100%;
 }
 
-.who-liked::-webkit-scrollbar {
+.who-liked::-webkit-scrollbar , .who-commented::-webkit-scrollbar{
 	width: 0.25em;
 }
 
