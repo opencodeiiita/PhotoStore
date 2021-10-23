@@ -36,14 +36,18 @@ function appendComment(comment, whoCommented) {
 	personName.innerHTML = comment.comment;
 	personName.addEventListener("mouseover",function(){
 		personName.className = 'scroll-comment'
-		personName.innerHTML = `Username: ${comment.username} <br>
-								Comment: ${comment.comment} <br>
-								Time: ${new Date(comment.timestamp)/ 1000}` 
-	})
+		personName.innerHTML = `
+			Username: ${comment.username}
+			Time: ${new Date(comment.timestamp * 1000).toUTCString()}
+			Comment: ${comment.comment}
+		`;
+	});
+
 	personName.addEventListener("mouseout",function(){
 		personName.className = 'main-comment'
 		personName.innerHTML = comment.comment
-	})
+	});
+
 	whoCommented.appendChild(personName);
 }
 
@@ -183,7 +187,7 @@ function createImageBox(id, viewingProfile, resolve) {
 					if(commentBox.style.display == "block"){commentBox.style.display = "none"}
 					else{commentBox.style.display = "block"}
 				});
-				
+
 				$(imageCommentButton).on('click', (event) => {
 					postComment(event.originalEvent);
 				});
@@ -361,11 +365,12 @@ function postComment(event){
 		return;
 
 	let value = imageBox.querySelector('.input-comment-box').value
-	if(!value){
-		alert("Cannot post a empty comment")
+
+	if (!value) {
+		alert("Cannot post an empty comment!")
 		return
 	}
-	
+
 	let json = JSON.stringify({
 		id: id,
 		value: value
@@ -379,12 +384,15 @@ function postComment(event){
 			if (xhr.status === 200) {
 				let json = JSON.parse(xhr.responseText);
 				imageBox.querySelector('.image-comments').innerHTML = json.comments.length
-				imageBox.querySelector('.input-comment-box').value = imageBox.querySelector('.input-comment-box').innerHTML = '' 
+				imageBox.querySelector('.input-comment-box').value = imageBox.querySelector('.input-comment-box').innerHTML = ''
+
 				var whoCommented = imageBox.querySelector('.who-commented')
-			  whoCommented.innerHTML = ''
-			  json.comments.forEach(comment => {
-				appendComment(comment, whoCommented);
-			  })
+
+				// clear the container
+				whoCommented.innerHTML = ''
+				json.comments.forEach(comment => {
+					appendComment(comment, whoCommented);
+				})
 			}
 			else
 			if (xhr.status === 403)

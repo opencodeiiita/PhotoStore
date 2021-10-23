@@ -481,6 +481,7 @@ def api_image_like():
 
     return json.dumps({"likes": likes, "totalLikes": totalLikes}), 200
 
+
 @app.route("/api/image/comment", methods=["POST"])
 def api_image_comment():
     try:
@@ -490,8 +491,8 @@ def api_image_comment():
     # except (JSONDecodeError, TypeError, ValueError):
     except Exception as e:
         id = None
-        value = ''
-        
+        value = ""
+
     if not id or not value:
         return json.dumps(None), 404
 
@@ -519,7 +520,9 @@ def api_image_comment():
             comments = image.get("comments")
             timestamp = int(time.time())
 
-            comments.append({"username": username ,"comment": value,"timestamp" : timestamp })
+            comments.append(
+                {"username": username, "comment": escape(value), "timestamp": timestamp}
+            )
 
             images.update(tinydb.operations.set("comments", comments), doc_ids=[id])
 
@@ -804,7 +807,7 @@ def profile():
 
     username = jwtData.get("username")
     uploads = 0
-    totalLikes = totalViews = totalComments =  0
+    totalLikes = totalViews = 0
 
     with dbLock:
         with TinyDB(app.config["DATABASE"]) as db:
@@ -820,7 +823,6 @@ def profile():
                 for image in imageList:
                     totalLikes += len(image.get("likes"))
                     totalViews += len(image.get("views"))
-                    totalComments += len(image.get("comments"))
 
     return render_template(
         "profile.html",
@@ -838,7 +840,6 @@ def api_user_info(username):
     uploads = 0
     totalLikes = 0
     totalViews = 0
-    totalComments = 0
 
     account = None
 
@@ -856,7 +857,6 @@ def api_user_info(username):
                 for image in imageList:
                     totalLikes += len(image.get("likes"))
                     totalViews += len(image.get("views"))
-                    totalComments += len(image.get("comments"))
 
     if not account:
         return json.dumps(None), 404
@@ -942,7 +942,7 @@ def upload():
                             "description": description,
                             "likes": [],
                             "views": [],
-                            "comments": []
+                            "comments": [],
                         }
 
                         with dbLock:

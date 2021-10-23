@@ -651,7 +651,7 @@ a.underline:hover:after {
 	color: var(--image-overlay-box-text-color);
 }
 
-.comment-box{
+.comment-box {
 	display: none;
 	margin-top: 100%;
 	z-index: 10;
@@ -659,7 +659,7 @@ a.underline:hover:after {
 
 
 .image-views-container {
-	border-radius: 0 0.4em 0.4em 0;
+	border-radius: 0.4em;
 	left: 37%;
 }
 
@@ -669,8 +669,8 @@ a.underline:hover:after {
 }
 
 .image-comments-container {
-	border-radius: 0.4em 0 0 0.4em;
-	left: 0;	
+	border-radius: 0 0.4em 0.4em 0;
+	left: 0;
 }
 
 .image-views {
@@ -696,10 +696,10 @@ a.underline:hover:after {
  * current PNG icons aren't clearly visible for `var(--box-bg-color)`
  */
 
- #comment-icon{
-	width: 80%; 
+ #comment-icon {
+	width: 80%;
 	height: 80%;
- }
+}
 
 .image-navigation-container {
 	position: absolute;
@@ -724,7 +724,8 @@ a.underline:hover:after {
 	border-radius: 0 0 0.4em 0.4em;
 }
 
-.who-liked , .who-commented{
+.who-liked,
+.who-commented {
 	position: absolute;
 
 	display: flex;
@@ -736,38 +737,47 @@ a.underline:hover:after {
 	max-width: 96%;
 	width: 10%;
 	height: 8.4em;
-
-	border-radius: 0.4em 0 0 0.4em;
-	right: 0;
 	top: 6.6em;
 
 	background-color: var(--image-overlay-box-bg-color);
 	color: var(--image-overlay-box-text-color);
 
-	padding: 0.4em 0 0.4em 0.4em;
-
 	overflow-x: hidden;
 	overflow-y: scroll;
 	transition: width var(--transition-duration);
 }
-.who-commented{
-	left: 0;
+
+.who-liked {
+	right: 0;
+	border-radius: 0.4em 0 0 0.4em;
+	padding: 0.4em 0 0.4em 0.4em;
 }
 
-.who-liked:hover , .who-commented:hover{
+.who-commented {
+	left: 0;
+	border-radius: 0 0.4em 0.4em 0;
+	padding: 0.4em 0.4em 0.4em 0;
+	direction: rtl;
+}
+
+.who-liked:hover,
+.who-commented:hover {
 	width: 85%;
 }
 
-.who-liked:empty ,.who-commented:empty{
+.who-liked:empty,
+.who-commented:empty {
 	width: 0%;
 	padding: 0;
 }
 
-.who-liked .username , .who-commented .username{
+.who-liked .username,
+.who-commented .username {
 	max-width: 100%;
 }
 
-.who-liked::-webkit-scrollbar , .who-commented::-webkit-scrollbar{
+.who-liked::-webkit-scrollbar,
+.who-commented::-webkit-scrollbar {
 	width: 0.25em;
 }
 
@@ -789,12 +799,15 @@ a.underline:hover:after {
 	padding: 0.5em 0;
 }
 
-.main-comment{
+.main-comment {
 	height: 27px;
 }
-.scroll-comment{
+
+.scroll-comment {
 	height: 90px;
 }
+
+
 /*
  * media queries here!
  */
