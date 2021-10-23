@@ -37,8 +37,8 @@ function appendComment(comment, whoCommented) {
 	personName.addEventListener("mouseover",function(){
 		personName.className = 'scroll-comment'
 		personName.innerHTML = `
-			Username: ${comment.username}
-			Time: ${new Date(comment.timestamp * 1000).toUTCString()}
+			Username: ${comment.username}<br>
+			Time: ${new Date(comment.timestamp * 1000).toUTCString()}<br>
 			Comment: ${comment.comment}
 		`;
 	});
