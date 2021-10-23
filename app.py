@@ -314,6 +314,7 @@ def api_image_info(id):
         "public": public,
         "likes": image.get("likes"),
         "views": len(image.get("views")),
+        "comments": image.get("comments"),
         "firstSeen": username and username not in image.get("views"),
     }
 
@@ -479,6 +480,53 @@ def api_image_like():
                 totalLikes += len(image.get("likes"))
 
     return json.dumps({"likes": likes, "totalLikes": totalLikes}), 200
+
+
+@app.route("/api/image/comment", methods=["POST"])
+def api_image_comment():
+    try:
+        data = json.loads(request.data.decode("latin1"))
+        id = int(data.get("id"))
+        value = data.get("value")
+    # except (JSONDecodeError, TypeError, ValueError):
+    except Exception as e:
+        id = None
+        value = ""
+
+    if not id or not value:
+        return json.dumps(None), 404
+
+    token = request.cookies.get("jwt")
+    jwtData = decodeFromJWT(token)
+    username = jwtData.get("username")
+
+    if not username:
+        return json.dumps(False), 403
+
+    image = None
+
+    with dbLock:
+        with TinyDB(app.config["DATABASE"]) as db:
+            images = db.table("images")
+            image = images.get(doc_id=id)
+
+    if not image:
+        return json.dumps(None), 404
+
+    with dbLock:
+        with TinyDB(app.config["DATABASE"]) as db:
+            images = db.table("images")
+            image = images.get(doc_id=id)
+            comments = image.get("comments")
+            timestamp = int(time.time())
+
+            comments.append(
+                {"username": username, "comment": escape(value), "timestamp": timestamp}
+            )
+
+            images.update(tinydb.operations.set("comments", comments), doc_ids=[id])
+
+    return json.dumps({"comments": comments}), 200
 
 
 @app.route("/avatar", methods=["GET", "POST"])
@@ -894,6 +942,7 @@ def upload():
                             "description": description,
                             "likes": [],
                             "views": [],
+                            "comments": [],
                         }
 
                         with dbLock:

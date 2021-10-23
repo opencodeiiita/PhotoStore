@@ -29,6 +29,28 @@ function appendUserInLikes(username, whoLiked) {
 	whoLiked.appendChild(personName);
 }
 
+function appendComment(comment, whoCommented) {
+	const personName = document.createElement('span');
+	personName.classList.add('main-comment');
+	personName.setAttribute('title', comment.comment);
+	personName.innerHTML = comment.comment;
+	personName.addEventListener("mouseover",function(){
+		personName.className = 'scroll-comment'
+		personName.innerHTML = `
+			Username: ${comment.username}<br>
+			Time: ${new Date(comment.timestamp * 1000).toUTCString()}<br>
+			Comment: ${comment.comment}
+		`;
+	});
+
+	personName.addEventListener("mouseout",function(){
+		personName.className = 'main-comment'
+		personName.innerHTML = comment.comment
+	});
+
+	whoCommented.appendChild(personName);
+}
+
 function loadImages() {
 	totalViews();
 
@@ -117,6 +139,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				imageBox.setAttribute('data-timestamp', new Date(info.time).getTime() / 1000);
 				imageBox.setAttribute('data-likes', info.likes.length);
 				imageBox.setAttribute('data-views', info.views + (info.firstSeen ? 1 : 0));
+				imageBox.setAttribute('data-comments', info.comments.length);
 
 				let image = imageBox.querySelector('.image');
 				image.src = `/api/image/get/${id}`;
@@ -153,6 +176,22 @@ function createImageBox(id, viewingProfile, resolve) {
 					likeImage(event.originalEvent);
 				});
 
+				let imageCommentContainer = imageBox.querySelector('.image-comments-container');
+				let imageComments = imageCommentContainer.querySelector('.image-comments');
+				imageComments.innerHTML = info.comments.length
+
+				let imageCommentIcon = imageCommentContainer.querySelector('.icon-container');
+				let imageCommentButton = imageBox.querySelector('.comment-post-button');
+				$(imageCommentIcon).on('click', (event) => {
+					let commentBox = imageBox.querySelector('.comment-box')
+					if(commentBox.style.display == "block"){commentBox.style.display = "none"}
+					else{commentBox.style.display = "block"}
+				});
+
+				$(imageCommentButton).on('click', (event) => {
+					postComment(event.originalEvent);
+				});
+
 				let imageLiked = info.likes.includes(getUsername());
 				imageLikes.innerHTML = info.likes.length;
 				imageLikeIcon.setAttribute('data-liked', imageLiked);
@@ -166,6 +205,14 @@ function createImageBox(id, viewingProfile, resolve) {
 				whoLiked.innerHTML = '';
 				info.likes.forEach(username => {
 					appendUserInLikes(username, whoLiked);
+				});
+
+				var whoCommented = imageBox.querySelector('.who-commented');
+
+				// clear the container
+				whoCommented.innerHTML = '';
+				info.comments.forEach(comment => {
+					appendComment(comment, whoCommented);
 				});
 
 				let imageNav = imageBox.querySelector('.image-navigation-container');
@@ -248,7 +295,7 @@ function makeImagePublic(event) {
 }
 
 function likeImage(event) {
-	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
+	let imageBox = (event.path || (event.composedPath && event.composedPath()))[5];
 	let id = imageBox.getAttribute('data-id');
 
 	// the user might have clicked on the `div`
@@ -309,6 +356,59 @@ function likeImage(event) {
 
 	xhr.send(json);
 }
+
+function postComment(event){
+	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
+	let id = imageBox.getAttribute('data-id');
+
+	if (!id)
+		return;
+
+	let value = imageBox.querySelector('.input-comment-box').value
+
+	if (!value) {
+		alert("Cannot post an empty comment!")
+		return
+	}
+
+	let json = JSON.stringify({
+		id: id,
+		value: value
+	});
+
+	let xhr = new XMLHttpRequest();
+	xhr.open('POST', '/api/image/comment');
+
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			if (xhr.status === 200) {
+				let json = JSON.parse(xhr.responseText);
+				imageBox.querySelector('.image-comments').innerHTML = json.comments.length
+				imageBox.querySelector('.input-comment-box').value = imageBox.querySelector('.input-comment-box').innerHTML = ''
+
+				var whoCommented = imageBox.querySelector('.who-commented')
+
+				// clear the container
+				whoCommented.innerHTML = ''
+				json.comments.forEach(comment => {
+					appendComment(comment, whoCommented);
+				})
+			}
+			else
+			if (xhr.status === 403)
+				alert('You need to be logged in to like an image!');
+			else
+			if (xhr.status === 404)
+				alert('Invalid request, refresh the page!');
+			else
+				alert('Check your network!');
+		}
+	};
+
+	xhr.send(json);
+}
+
+
 
 function deleteImage(event) {
 	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
