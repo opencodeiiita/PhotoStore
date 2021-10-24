@@ -8,7 +8,6 @@ import time
 import os
 from hashlib import md5
 import mimetypes
-from datetime import datetime
 from pathlib import Path
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
@@ -308,7 +307,7 @@ def api_image_info(id):
     username = jwtData.get("username")
 
     info = {
-        "time": str(datetime.fromtimestamp(image.get("timestamp"))),
+        "timestamp": image.get("timestamp"),
         "owner": owner,
         "description": image.get("description"),
         "public": public,
@@ -862,7 +861,7 @@ def api_user_info(username):
         return json.dumps(None), 404
 
     info = {
-        "time": str(datetime.fromtimestamp(account.get("timestamp"))),
+        "timestamp": account.get("timestamp"),
         "username": username,
         "likes": totalLikes,
         "views": totalViews,

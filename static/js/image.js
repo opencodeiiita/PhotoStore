@@ -1,13 +1,27 @@
-$(document).ready(loadImages);
+$(document).ready(() => {
+	loadImages();
 
-let doNotOwnThisImageMessage = 'You don\'t own this image!',
-	invalidRequest = 'Invalid request!';
+	// register 'onclick' event to hide the selected comment
+	$('#comment-overlay').on('click', function() {
+		$('.comment-box.selected').removeClass('selected');
+		this.classList.remove('enabled');
+		$('body.no-scroll').removeClass('no-scroll');
+	});
+});
+
+// to convert `timestamp` to UTC time string
+function fromTimestamp(timestamp) {
+	return new Date(timestamp * 1000).toUTCString();
+}
 
 // We can keep this function in some other file
 // if it is required somewhere else
 function getUsername() {
 	let jwtCookie = $.cookie('jwt');
+
 	try {
+		// extract the `payload`
+		// format: header.payload.signature
 		let base64Payload = jwtCookie.split('.')[1];
 		let decodedData = JSON.parse(atob(base64Payload));
 		return decodedData.username;
@@ -18,44 +32,11 @@ function getUsername() {
 	return null;
 }
 
-function appendUserInLikes(username, whoLiked) {
-	const personName = document.createElement('span');
-	personName.classList.add('username');
-	personName.classList.add('overflow-ellipsis');
-	personName.setAttribute('title', username);
-	personName.innerText = username;
-
-	// insert the username into `who-liked` list
-	whoLiked.appendChild(personName);
-}
-
-function appendComment(comment, whoCommented) {
-	const personName = document.createElement('span');
-	personName.classList.add('main-comment');
-	personName.setAttribute('title', comment.comment);
-	personName.innerHTML = comment.comment;
-	personName.addEventListener("mouseover",function(){
-		personName.className = 'scroll-comment'
-		personName.innerHTML = `
-			Username: ${comment.username}<br>
-			Time: ${new Date(comment.timestamp * 1000).toUTCString()}<br>
-			Comment: ${comment.comment}
-		`;
-	});
-
-	personName.addEventListener("mouseout",function(){
-		personName.className = 'main-comment'
-		personName.innerHTML = comment.comment
-	});
-
-	whoCommented.appendChild(personName);
-}
-
 function loadImages() {
 	totalViews();
 
-	let pagetype = $('#images')[0].getAttribute('data-pagetype');
-	let URL = '/api/image/list';
+	let pagetype = $('#images')[0].getAttribute('data-pagetype'),
+		URL = '/api/image/list';
 
 	if (pagetype)
 		URL = `${URL}?pagetype=${pagetype}`;
@@ -97,35 +78,13 @@ function loadImages() {
 	xhr.send();
 }
 
-function totalViews(){
-	let username = getUsername();
-
-	if (!username)
-		return;
-
-	let xhr = new XMLHttpRequest();
-	xhr.open('GET', `/api/user/info/${username}`);
-
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			let info = JSON.parse(xhr.responseText);
-			let numViews = $('#numViews')[0];
-
-			if (numViews)
-				numViews.innerHTML = parseInt(info.views);
-		}
-	}
-
-	xhr.send();
-}
-
 function createImageBox(id, viewingProfile, resolve) {
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', `/api/image/info/${id}`);
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
-			if (xhr.status == 200) {
+			if (xhr.status === 200) {
 				// get the image info
 				let info = JSON.parse(xhr.responseText);
 
@@ -136,7 +95,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				// start filling the template
 				let imageBox = cloneTemplate.querySelector('.image-box');
 				imageBox.setAttribute('data-id', id);
-				imageBox.setAttribute('data-timestamp', new Date(info.time).getTime() / 1000);
+				imageBox.setAttribute('data-timestamp', info.timestamp);
 				imageBox.setAttribute('data-likes', info.likes.length);
 				imageBox.setAttribute('data-views', info.views + (info.firstSeen ? 1 : 0));
 				imageBox.setAttribute('data-comments', info.comments.length);
@@ -153,66 +112,71 @@ function createImageBox(id, viewingProfile, resolve) {
 					imageOwner.setAttribute('title', info.owner);
 				}
 
-				imageTime.innerHTML = info.time;
-				imageTime.setAttribute('title', info.time);
+				let time = fromTimestamp(info.timestamp);
+				imageTime.innerHTML = time;
+				imageTime.setAttribute('title', time);
 
 				let imageDescription = imageBox.querySelector('.image-description');
 				imageDescription.innerHTML = info.description;
-				imageDescription.setAttribute('title', info.description);
+				imageDescription.setAttribute('title', imageDescription.innerText);
 
-				let imageViewsContainer = imageBox.querySelector('.image-views-container');
-				let imageViews = imageViewsContainer.querySelector('.image-views');
+				let imageViewsContainer = imageBox.querySelector('.image-views-container'),
+					imageViews = imageViewsContainer.querySelector('.image-views'),
+					numViews = $('#numViews')[0];
+
 				imageViews.innerHTML = info.views + (info.firstSeen ? 1 : 0);
+				imageViews.setAttribute('title', imageViews.innerText);
 
-				let numViews = $('#numViews')[0];
 				if (numViews && info.firstSeen)
 					numViews.innerHTML = parseInt(numViews.innerHTML) + 1;
 
-				let imageLikesContainer = imageBox.querySelector('.image-likes-container');
-				let imageLikes = imageLikesContainer.querySelector('.image-likes'),
+				let imageCommentContainer = imageBox.querySelector('.image-comments-container'),
+					imageComments = imageCommentContainer.querySelector('.image-comments'),
+					imageCommentIcon = imageCommentContainer.querySelector('.icon-container');
+
+				imageComments.innerHTML = info.comments.length;
+				imageComments.setAttribute('title', info.comments.length);
+
+				$(imageCommentIcon).on('click', () => {
+					imageBox.classList.toggle('commenting');
+				});
+
+				let imageLikesContainer = imageBox.querySelector('.image-likes-container'),
+					imageLikes = imageLikesContainer.querySelector('.image-likes'),
+					imageLiked = info.likes.includes(getUsername());
+
+				imageLikes.innerHTML = info.likes.length;
+				imageLikes.setAttribute('title', info.likes.length);
 
 				imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
-				$(imageLikeIcon).on('click', (event) => {
-					likeImage(event.originalEvent);
+				$(imageLikeIcon).on('click', () => {
+					likeImage(imageBox);
 				});
 
-				let imageCommentContainer = imageBox.querySelector('.image-comments-container');
-				let imageComments = imageCommentContainer.querySelector('.image-comments');
-				imageComments.innerHTML = info.comments.length
-
-				let imageCommentIcon = imageCommentContainer.querySelector('.icon-container');
-				let imageCommentButton = imageBox.querySelector('.comment-post-button');
-				$(imageCommentIcon).on('click', (event) => {
-					let commentBox = imageBox.querySelector('.comment-box')
-					if(commentBox.style.display == "block"){commentBox.style.display = "none"}
-					else{commentBox.style.display = "block"}
-				});
-
-				$(imageCommentButton).on('click', (event) => {
-					postComment(event.originalEvent);
-				});
-
-				let imageLiked = info.likes.includes(getUsername());
-				imageLikes.innerHTML = info.likes.length;
 				imageLikeIcon.setAttribute('data-liked', imageLiked);
 
 				if (imageLiked)
 					imageLikeIcon.classList.add('dislike');
 
-				var whoLiked = imageBox.querySelector('.who-liked');
-
-				// clear the container
-				whoLiked.innerHTML = '';
-				info.likes.forEach(username => {
-					appendUserInLikes(username, whoLiked);
+				let commentForm = imageBox.querySelector('.comment-input-form');
+				$(commentForm).on('submit', () => {
+					postComment(imageBox);
 				});
 
-				var whoCommented = imageBox.querySelector('.who-commented');
+				var whoCommentedList = imageBox.querySelector('.who-commented-list');
 
-				// clear the container
-				whoCommented.innerHTML = '';
-				info.comments.forEach(comment => {
-					appendComment(comment, whoCommented);
+				// clear the list
+				whoCommentedList.innerHTML = '';
+				info.comments.forEach(commentObject => {
+					appendCommentInComments(commentObject, whoCommentedList);
+				});
+
+				var whoLikedList = imageBox.querySelector('.who-liked-list');
+
+				// clear the list
+				whoLikedList.innerHTML = '';
+				info.likes.forEach(username => {
+					appendUserInLikes(username, whoLikedList);
 				});
 
 				let imageNav = imageBox.querySelector('.image-navigation-container');
@@ -229,17 +193,21 @@ function createImageBox(id, viewingProfile, resolve) {
 				changeVisibilityIcon.src = `static/icons/${value}.png`;
 				imageBox.setAttribute('data-visibility', value);
 
-				$(changeVisibilityIcon).on('click', (event) => {
-					makeImagePublic(event.originalEvent);
+				$(changeVisibilityIcon).on('click', () => {
+					makeImagePublic(imageBox);
 				});
 
-				$(deleteImageIcon).on('click', (event) => {
-					deleteImage(event.originalEvent);
+				$(deleteImageIcon).on('click', () => {
+					deleteImage(imageBox);
 				});
 
 				image.onload = function() {
 					this.style.opacity = '1';
 				}
+
+				$(imageBox).on('mouseleave', () => {
+					imageBox.classList.remove('commenting');
+				});
 
 				resolve(imageBox);
 			}
@@ -253,18 +221,85 @@ function createImageBox(id, viewingProfile, resolve) {
 	xhr.send();
 }
 
-function makeImagePublic(event) {
-	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	let id = imageBox.getAttribute('data-id');
+function totalViews() {
+	let username = getUsername();
 
-	// the user might have clicked on the `div`
-	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
-	// so `id` can be `null`
-	if (!id)
+	if (!username)
 		return;
 
-	let img = (event.path || (event.composedPath && event.composedPath()))[0];
-	let value = imageBox.getAttribute('data-visibility') === 'public' ? 'private' : 'public';
+	let xhr = new XMLHttpRequest();
+	xhr.open('GET', `/api/user/info/${username}`);
+
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			let info = JSON.parse(xhr.responseText);
+			let numViews = $('#numViews')[0];
+
+			if (numViews)
+				numViews.innerHTML = parseInt(info.views);
+		}
+	}
+
+	xhr.send();
+}
+
+function appendUserInLikes(username, whoLikedList) {
+	// create a clone from our template
+	let usernameTemplate = $('#username-box-template')[0];
+	let cloneTemplate = usernameTemplate.content.cloneNode(true);
+
+	// start filling the template
+	let usernameBox = cloneTemplate.querySelector('.username-box');
+	usernameBox.setAttribute('title', username);
+
+	let usernameSpan = usernameBox.querySelector('.username');
+	usernameSpan.innerHTML = username;
+	usernameSpan.setAttribute('title', username);
+
+	// insert the username into `who-liked-list` list
+	whoLikedList.appendChild(usernameBox);
+}
+
+function appendCommentInComments(commentObject, whoCommentedList) {
+	// create a clone from our template
+	let commentTemplate = $('#comment-box-template')[0];
+	let cloneTemplate = commentTemplate.content.cloneNode(true);
+
+	// start filling the template
+	let commentBox = cloneTemplate.querySelector('.comment-box');
+	commentBox.setAttribute('data-username', commentObject.username);
+	commentBox.setAttribute('data-timestamp', commentObject.timestamp);
+
+	let commentUsername = commentBox.querySelector('.comment-username'),
+		commentTime = commentBox.querySelector('.comment-time'),
+		commentBody = commentBox.querySelector('.comment-body');
+
+	commentUsername.innerHTML = commentObject.username;
+	commentUsername.setAttribute('title', commentObject.username);
+
+	let time = fromTimestamp(commentObject.timestamp);
+	commentTime.innerHTML = time;
+	commentTime.setAttribute('title', time);
+
+	commentBody.innerHTML = commentObject.comment;
+	commentBody.setAttribute('title', commentBody.innerText);
+
+	commentBox.setAttribute('title', commentBody.innerText);
+
+	$(commentBox).on('click', () => {
+		showComment(commentBox);
+	});
+
+	// insert the comment into `who-commented-list` list
+	whoCommentedList.appendChild(commentBox);
+}
+
+function makeImagePublic(imageBox) {
+	let id = imageBox.getAttribute('data-id');
+	let imageNavigationContainer = imageBox.querySelector('.image-navigation-container'),
+		makePublicIcon = imageNavigationContainer.querySelector('.make-public'),
+		img = makePublicIcon.querySelector('img'),
+		value = imageBox.getAttribute('data-visibility') === 'public' ? 'private' : 'public';
 
 	let json = JSON.stringify({
 		id: id,
@@ -282,10 +317,10 @@ function makeImagePublic(event) {
 			}
 			else
 			if (xhr.status === 403)
-				alert(doNotOwnThisImageMessage);
+				alert('You don\'t own this image!');
 			else
 			if (xhr.status === 404)
-				alert(invalidRequest);
+				alert('Invalid request!');
 			else
 				alert('Check your network!');
 		}
@@ -294,19 +329,12 @@ function makeImagePublic(event) {
 	xhr.send(json);
 }
 
-function likeImage(event) {
-	let imageBox = (event.path || (event.composedPath && event.composedPath()))[5];
+function likeImage(imageBox) {
 	let id = imageBox.getAttribute('data-id');
-
-	// the user might have clicked on the `div`
-	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
-	// so `id` can be `null`
-	if (!id)
-		return;
-
-	let likeButton = (event.path || (event.composedPath && event.composedPath()))[1];
-	let likes = (event.path || (event.composedPath && event.composedPath()))[2].children[0];
-	let value = !(likeButton.getAttribute('data-liked') === 'true');
+	let imageLikesContainer = imageBox.querySelector('.image-likes-container'),
+		likes = imageLikesContainer.querySelector('.image-likes'),
+		likeButton = imageLikesContainer.querySelector('.icon-container'),
+		value = !(likeButton.getAttribute('data-liked') === 'true');
 
 	let json = JSON.stringify({
 		id: id,
@@ -335,12 +363,12 @@ function likeImage(event) {
 				likes.innerHTML = json.likes.length;
 				imageBox.setAttribute('data-likes', json.likes.length);
 
-				var whoLiked = imageBox.querySelector('.who-liked');
+				var whoLikedList = imageBox.querySelector('.who-liked-list');
 
-				// clear the container
-				whoLiked.innerHTML = '';
+				// clear the list
+				whoLikedList.innerHTML = '';
 				json.likes.forEach(username => {
-					appendUserInLikes(username, whoLiked);
+					appendUserInLikes(username, whoLikedList);
 				});
 			}
 			else
@@ -357,19 +385,13 @@ function likeImage(event) {
 	xhr.send(json);
 }
 
-function postComment(event){
-	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
-	let id = imageBox.getAttribute('data-id');
+function postComment(imageBox) {
+	// stop the form submission
+	event.preventDefault();
 
-	if (!id)
-		return;
-
-	let value = imageBox.querySelector('.input-comment-box').value
-
-	if (!value) {
-		alert("Cannot post an empty comment!")
-		return
-	}
+	let id = imageBox.getAttribute('data-id'),
+		commentInput = imageBox.querySelector('.comment-input'),
+		value = commentInput.value;
 
 	let json = JSON.stringify({
 		id: id,
@@ -383,20 +405,26 @@ function postComment(event){
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			if (xhr.status === 200) {
 				let json = JSON.parse(xhr.responseText);
-				imageBox.querySelector('.image-comments').innerHTML = json.comments.length
-				imageBox.querySelector('.input-comment-box').value = imageBox.querySelector('.input-comment-box').innerHTML = ''
 
-				var whoCommented = imageBox.querySelector('.who-commented')
+				let comments = imageBox.querySelector('.image-comments');
+				comments.innerHTML = json.comments.length;
 
-				// clear the container
-				whoCommented.innerHTML = ''
-				json.comments.forEach(comment => {
-					appendComment(comment, whoCommented);
-				})
+				let commentForm = imageBox.querySelector('.comment-input-form');
+				commentForm.reset();
+
+				var whoCommentedList = imageBox.querySelector('.who-commented-list');
+
+				// clear the list
+				whoCommentedList.innerHTML = '';
+				json.comments.forEach(commentObject => {
+					appendCommentInComments(commentObject, whoCommentedList);
+				});
+
+				imageBox.classList.remove('commenting');
 			}
 			else
 			if (xhr.status === 403)
-				alert('You need to be logged in to like an image!');
+				alert('You need to be logged in to comment on an image!');
 			else
 			if (xhr.status === 404)
 				alert('Invalid request, refresh the page!');
@@ -408,18 +436,8 @@ function postComment(event){
 	xhr.send(json);
 }
 
-
-
-function deleteImage(event) {
-	let imageBox = (event.path || (event.composedPath && event.composedPath()))[4];
+function deleteImage(imageBox) {
 	let id = imageBox.getAttribute('data-id');
-
-	// the user might have clicked on the `div`
-	// and we are using `(event.path || (event.composedPath && event.composedPath()))` to manipulate data
-	// so `id` can be `null`
-	if (!id)
-		return;
-
 	let json = JSON.stringify({
 		id: id,
 	});
@@ -457,14 +475,28 @@ function deleteImage(event) {
 			}
 			else
 			if (xhr.status === 403)
-				alert(doNotOwnThisImageMessage);
+				alert('You don\'t own this image!');
 			else
 			if (xhr.status === 404)
-				alert(invalidRequest);
+				alert('Invalid request!');
 			else
 				alert('Check your network!');
 		}
 	};
 
 	xhr.send(json);
+}
+
+function showComment(commentBox) {
+	// will implement this later
+	return;
+
+	// mark the current commentBox as being selected
+	commentBox.classList.add('selected');
+
+	// enable the comment overlay
+	// we have already registered an event listener
+	// for `onclick` event to hide the `modal`
+	$('#comment-overlay').addClass('enabled');
+	$('body').addClass('no-scroll');
 }
