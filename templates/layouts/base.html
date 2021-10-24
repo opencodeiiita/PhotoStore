@@ -8,7 +8,7 @@
 	<link rel="icon"  href="{{ url_for('static', filename='icons/favicon.ico') }}" type="image/x-icon">
 
 	<title>
-		PhotoStore{% if self.title() %} | {%- block title %}{% endblock title %}{% endif %}
+		PhotoStore{% if self.title() %} | {% block title %}{% endblock title %}{% endif %}
 	</title>
 	
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" type="text/css">
