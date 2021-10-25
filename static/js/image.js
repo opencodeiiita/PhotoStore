@@ -179,21 +179,20 @@ function createImageBox(id, viewingProfile, resolve) {
 					appendUserInLikes(username, whoLikedList);
 				});
 
-				let imageNav = imageBox.querySelector('.image-navigation-container');
-				let imageNavButtons = imageNav.querySelectorAll('.icon-container');
+				let imageNav = imageBox.querySelector('.image-navigation-container'),
+					downloadImageLink = imageNav.querySelector('.delete'),
+					changeImageVisibilityIcon = imageNav.querySelector('.make-public'),
+					changeImageVisibilityIconImage = changeImageVisibilityIcon.querySelector('img'),
+					deleteImageIcon = imageNav.querySelector('.delete');
 
-				let downloadImageLink = imageNav.children[0];
 				downloadImageLink.href = `/api/image/get/${id}`;
-
-				let changeVisibilityIcon = imageNavButtons[1].children[0],
-					deleteImageIcon = imageNavButtons[2].children[0];
 
 				let value = info.public ? 'public' : 'private';
 
-				changeVisibilityIcon.src = `static/icons/${value}.png`;
 				imageBox.setAttribute('data-visibility', value);
+				changeImageVisibilityIconImage.src = `/static/icons/${value}.png`;
 
-				$(changeVisibilityIcon).on('click', () => {
+				$(changeImageVisibilityIcon).on('click', () => {
 					makeImagePublic(imageBox);
 				});
 
@@ -438,12 +437,9 @@ function postComment(imageBox) {
 
 function deleteImage(imageBox) {
 	let id = imageBox.getAttribute('data-id');
-	let json = JSON.stringify({
-		id: id,
-	});
 
 	let xhr = new XMLHttpRequest();
-	xhr.open('POST', '/api/image/delete');
+	xhr.open('POST', `/api/image/delete/${id}`);
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -484,7 +480,7 @@ function deleteImage(imageBox) {
 		}
 	};
 
-	xhr.send(json);
+	xhr.send();
 }
 
 function showComment(commentBox) {

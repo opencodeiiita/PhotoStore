@@ -323,13 +323,11 @@ def api_image_info(id):
     return json.dumps(None), 403
 
 
-@app.route("/api/image/delete", methods=["POST"])
-def api_image_delete():
+@app.route("/api/image/delete/<id>", methods=["POST"])
+def api_image_delete(id):
     try:
-        data = json.loads(request.data.decode("latin1"))
-        id = int(data.get("id"))
-    # except (JSONDecodeError, TypeError, ValueError):
-    except:
+        id = int(id)
+    except ValueError:
         id = None
 
     if not id:
@@ -377,7 +375,8 @@ def api_image_delete():
                         totalLikes += len(image.get("likes"))
                         totalViews += len(image.get("views"))
 
-            return json.dumps({"totalLikes": totalLikes, "totalViews": totalViews}), 200
+            info = {"totalLikes": totalLikes, "totalViews": totalViews}
+            return jsonify(info)
         else:
             return json.dumps(None), 404
 
