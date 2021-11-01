@@ -70,10 +70,7 @@ app.config["DATABASE"] = "photostore.db"
 app.config["USE_CAPTCHA"] = False
 
 # apply Talisman
-csp = {
-    "default-src": "'self'",
-    "img-src": "'self' data:"
-}
+csp = {"default-src": "'self'", "img-src": "'self' data:"}
 
 talisman = Talisman(app, force_https=False, content_security_policy=csp)
 
@@ -963,6 +960,87 @@ def upload():
             return redirect(request.url)
 
     return render_template("upload.html", loggedIn=True)
+
+
+@app.route("/reset-password", methods=["GET", "POST"])
+def reset_pwd():
+    if not request.cookies.get("jwt"):
+        return redirect(url_for("login"))
+
+    token = request.cookies.get("jwt")
+    jwtData = decodeFromJWT(token)
+
+    if not jwtData:
+        resp = make_response(redirect(url_for("login")))
+        resp.delete_cookie("jwt")
+        return resp
+
+    username = jwtData.get("username")
+
+    if request.method == "POST":
+        cupassword = request.form.get("cupassword")
+        npassword = request.form.get("npassword")
+        npassworda = request.form.get("npassworda")
+
+        if not (cupassword or npassword or npassworda):
+            flash("Invalid Form Submission!", "error")
+            return redirect(request.url)
+
+        if not (8 <= len(npassword) <= 32):
+            flash("Password can have 8-32 characters only!", "error")
+            return redirect(request.url)
+
+        if npassword != npassworda:
+            flash("Passwords are not same!", "error")
+            return redirect(request.url)
+
+        if app.config["USE_CAPTCHA"]:
+            captcha_answer = request.form.get("captcha_answer")
+            captcha_jwt = request.form.get("captcha_jwt")
+
+            captcha_result = verifyCaptcha(captcha_answer, captcha_jwt)
+
+            if captcha_result["expired"]:
+                flash("CAPTCHA has expired!", "error")
+                return redirect(request.url)
+
+            if not captcha_result["valid"]:
+                flash("CAPTCHA error!", "error")
+                return redirect(request.url)
+
+        validCredentials = False
+        account = None
+
+        with dbLock:
+            with TinyDB(app.config["DATABASE"]) as db:
+                accounts = db.table("accounts")
+                account = accounts.get(Query().username == username)
+
+                if account:
+                    passwd_hash = account.get("passwd_hash").encode("latin1")
+                    validCredentials = bcrypt.checkpw(
+                        cupassword.encode("latin1"), passwd_hash
+                    )
+
+        if validCredentials:
+            passwd_salt = bcrypt.gensalt(rounds=12)
+            passwd_hash = bcrypt.hashpw(npassword.encode("latin1"), passwd_salt).decode(
+                "latin1"
+            )
+            account["passwd_hash"] = passwd_hash
+            with dbLock:
+                with TinyDB(app.config["DATABASE"]) as db:
+                    accounts = db.table("accounts")
+                    accounts.update(account)
+            flash("Password Updated Successfully", "success")
+            return redirect(url_for("profile"))
+
+        else:
+            flash("Invalid credentials!", "error")
+
+    return render_template(
+        "resetpassword.html", captcha_enabled=app.config["USE_CAPTCHA"]
+    )
 
 
 if __name__ == "__main__":
