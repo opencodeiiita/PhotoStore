@@ -284,10 +284,19 @@ a.underline:hover:after {
 
 .profile-container {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	max-width: 100%;
+	gap: 0.2em;
+}
+
+.username-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
 	gap: 0.4em;
+	max-width: 100%;
 }
 
 #avatarChange {
@@ -312,6 +321,11 @@ a.underline:hover:after {
 #profile-image img {
 	border-radius: 100%;
 	aspect-ratio: 1;
+}
+
+a.reset-password {
+	color: black;
+	font-size: 0.6em;
 }
 
 .profile-navigation-container {
@@ -504,7 +518,7 @@ a.underline:hover:after {
 
 	background-color: var(--green-color);
 	border-radius: 0.5em;
-	
+
 	box-shadow: 0 0.1em 0.2em black;
 }
 

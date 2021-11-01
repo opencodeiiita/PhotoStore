@@ -8,15 +8,19 @@ Profile
 <script src="{{ url_for('static', filename='js/profile.js') }}" type="text/javascript" defer></script>
 
 <div class="profile-container">
-	<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
+	<div class="username-container">
+		<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
 
-	<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
-		<input id="avatarChange" type=file name="avatar" accept="image/*">
+		<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
+			<input id="avatarChange" type=file name="avatar" accept="image/*">
 
-		<div id="profile-image" title="Change avatar">
-			<img src="{{ url_for('avatar') }}">
-		</div>
-	</form>
+			<div id="profile-image" title="Change avatar">
+				<img src="{{ url_for('avatar') }}">
+			</div>
+		</form>
+	</div>
+
+	<a class="underline reset-password" href="{{ url_for('reset_pwd') }}" title="Reset password" >Reset password</a>
 </div>
 
 <div class="profile-navigation-container">
@@ -33,7 +37,7 @@ Profile
 	<div class="profile-meta-container">
 		<div class="profile-meta">
 			<span id="numViews">{{ totalViews }}</span>
-			<img  class="icon-container" src="{{ url_for('static', filename='icons/views.png') }}">
+			<img class="icon-container" src="{{ url_for('static', filename='icons/views.png') }}">
 		</div>
 
 		<div class="profile-meta">
