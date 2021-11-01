@@ -1008,8 +1008,9 @@ def reset_pwd():
                 flash("CAPTCHA error!", "error")
                 return redirect(request.url)
 
-        validCredentials = False
+
         account = None
+        validCredentials = False
 
         with dbLock:
             with TinyDB(app.config["DATABASE"]) as db:
@@ -1027,19 +1028,21 @@ def reset_pwd():
             passwd_hash = bcrypt.hashpw(npassword.encode("latin1"), passwd_salt).decode(
                 "latin1"
             )
+
             account["passwd_hash"] = passwd_hash
+
             with dbLock:
                 with TinyDB(app.config["DATABASE"]) as db:
                     accounts = db.table("accounts")
                     accounts.update(account)
+
             flash("Password Updated Successfully", "success")
             return redirect(url_for("profile"))
-
         else:
             flash("Invalid credentials!", "error")
 
     return render_template(
-        "resetpassword.html", captcha_enabled=app.config["USE_CAPTCHA"]
+        "reset-password.html", captcha_enabled=app.config["USE_CAPTCHA"]
     )
 
 
