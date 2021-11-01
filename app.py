@@ -1008,7 +1008,6 @@ def reset_pwd():
                 flash("CAPTCHA error!", "error")
                 return redirect(request.url)
 
-
         account = None
         validCredentials = False
 
@@ -1042,7 +1041,9 @@ def reset_pwd():
             flash("Invalid credentials!", "error")
 
     return render_template(
-        "reset-password.html", captcha_enabled=app.config["USE_CAPTCHA"]
+        "reset-password.html",
+        captcha_enabled=app.config["USE_CAPTCHA"],
+        loggedIn=True,
     )
 
 
