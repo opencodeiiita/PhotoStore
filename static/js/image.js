@@ -19,6 +19,7 @@ function loadImages() {
 				profileUploadInfo = document.querySelector('#numPhotos'),
 				images = document.getElementById('images'),
 				imagesMessage = document.getElementById('images-message');
+				headerLoader = document.getElementById('header-loader');
 
 			if (imageList.length > 0) {
 				if (profileUploadInfo)
@@ -31,6 +32,8 @@ function loadImages() {
 
 					if (imageBox)
 						images.appendChild(imageBox);
+						
+					headerLoader.style.width = `${(parseInt(idx)+1) * 100 / imageList.length}%`;
 				}
 
 				imagesMessage.remove();
@@ -41,6 +44,8 @@ function loadImages() {
 
 				imagesMessage.innerText = 'Aw snap! No images to show!';
 			}
+
+			headerLoader.style.width = '100%';
 		}
 	};
 
