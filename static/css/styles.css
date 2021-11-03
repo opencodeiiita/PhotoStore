@@ -72,43 +72,50 @@ header, footer {
 
 header {
 	position: fixed;
-    flex-direction: column;
-    z-index: 999;
-    height: var(--hf-height);
-    align-items: start;
-    justify-content: center;
+	flex-direction: column;
+	z-index: 999;
+	height: var(--hf-height);
+	align-items: start;
+	justify-content: center;
 }
+
 .header-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-    height: 100%;
-    width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1em;
+	height: 100%;
+	width: 100%;
 }
+
 #header-loader {
 	width: 0%;
-    height: 0.2em;
-    background-color: var(--accent-color);
-    transition: width var(--transition-duration);
+	height: 0.2em;
+	background-color: var(--accent-color);
+	transition: width var(--transition-duration);
 }
+
+#header-loader.completed {
+        width: 100%;
+}
+
 footer {
 	position: relative;
 	min-height: var(--hf-height);
 	justify-content: center;
 }
 
-.heading-container {
+header .heading-container {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 2em;
-	padding-left:0.2rem;
+	padding-left: 0.5em;
 	transition: color var(--transition-duration);
 }
 
-.heading-container:hover {
+header .heading-container:hover {
 	color: grey;
 	cursor: pointer;
 }

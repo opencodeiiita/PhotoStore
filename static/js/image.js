@@ -63,7 +63,7 @@ function loadImages() {
 
 					if (imageBox)
 						images.appendChild(imageBox);
-						
+
 					headerLoader.style.width = `${(parseInt(idx)+1) * 100 / imageList.length}%`;
 				}
 
@@ -77,6 +77,7 @@ function loadImages() {
 			}
 
 			headerLoader.style.width = '100%';
+			headerLoader.classList.add('completed');
 		}
 	};
 
