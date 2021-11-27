@@ -49,7 +49,7 @@ function loadImages() {
 			let imageList = JSON.parse(xhr.responseText),
 				profileUploadInfo = document.querySelector('#numPhotos'),
 				images = document.getElementById('images'),
-				imagesMessage = document.getElementById('images-message');
+				imagesMessage = document.getElementById('images-message'),
 				headerLoader = document.getElementById('header-loader');
 
 			if (imageList.length > 0) {
@@ -154,7 +154,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				imageLikes.innerHTML = info.likes.length;
 				imageLikes.setAttribute('title', info.likes.length);
 
-				imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
+				let imageLikeIcon = imageLikesContainer.querySelector('.icon-container');
 				$(imageLikeIcon).on('click', () => {
 					likeImage(imageBox);
 				});
@@ -169,7 +169,7 @@ function createImageBox(id, viewingProfile, resolve) {
 					postComment(imageBox);
 				});
 
-				var whoCommentedList = imageBox.querySelector('.who-commented-list');
+				let whoCommentedList = imageBox.querySelector('.who-commented-list');
 
 				// clear the list
 				whoCommentedList.innerHTML = '';
@@ -177,7 +177,7 @@ function createImageBox(id, viewingProfile, resolve) {
 					appendCommentInComments(commentObject, whoCommentedList);
 				});
 
-				var whoLikedList = imageBox.querySelector('.who-liked-list');
+				let whoLikedList = imageBox.querySelector('.who-liked-list');
 
 				// clear the list
 				whoLikedList.innerHTML = '';
@@ -186,7 +186,7 @@ function createImageBox(id, viewingProfile, resolve) {
 				});
 
 				let imageNav = imageBox.querySelector('.image-navigation-container'),
-					downloadImageLink = imageNav.querySelector('.delete'),
+					downloadImageLink = imageNav.querySelector('.download'),
 					changeImageVisibilityIcon = imageNav.querySelector('.make-public'),
 					changeImageVisibilityIconImage = changeImageVisibilityIcon.querySelector('img'),
 					deleteImageIcon = imageNav.querySelector('.delete');
@@ -417,7 +417,7 @@ function postComment(imageBox) {
 				let commentForm = imageBox.querySelector('.comment-input-form');
 				commentForm.reset();
 
-				var whoCommentedList = imageBox.querySelector('.who-commented-list');
+				let whoCommentedList = imageBox.querySelector('.who-commented-list');
 
 				// clear the list
 				whoCommentedList.innerHTML = '';
@@ -463,9 +463,9 @@ function deleteImage(imageBox) {
 				imageBox.remove();
 
 				let images = $('#images')[0];
-				let pagetype = images.getAttribute('data-pagetype');
+				let pageType = images.getAttribute('data-pagetype');
 
-				if (pagetype === 'profile') {
+				if (pageType === 'profile') {
 					let profileUploadInfo = $('#numPhotos')[0],
 						numPhotos = images.children.length;
 
