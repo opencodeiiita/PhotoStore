@@ -297,7 +297,6 @@ def api_image_info(id):
 
     public = image.get("public")
     owner = image.get("owner")
-    filename = image.get("filename")
 
     token = request.cookies.get("jwt")
     jwtData = decodeFromJWT(token)
@@ -340,7 +339,6 @@ def api_image_delete(id):
     if not image:
         return json.dumps(None), 404
 
-    public = image.get("public")
     owner = image.get("owner")
     filename = image.get("filename")
 
@@ -404,9 +402,7 @@ def api_image_make_public():
     if not image:
         return json.dumps(None), 404
 
-    public = image.get("public")
     owner = image.get("owner")
-    filename = image.get("filename")
 
     token = request.cookies.get("jwt")
     jwtData = decodeFromJWT(token)
@@ -861,6 +857,7 @@ def api_user_info(username):
         "username": username,
         "likes": totalLikes,
         "views": totalViews,
+        "uploads": uploads
     }
 
     return jsonify(info)
