@@ -2,16 +2,16 @@
 A **buggy** web application to store and share your photos
 
 ## Note
-All Cyber Security issues have been solved and thus `main` branch is now archived!<br>
+All Cyber Security issues have been solved and thus `cybersec` branch is now archived!<br>
 If you find any Issues, feel free to submit one.
 
 ## Before you start
 This project is divided into two branches
-- `main` - Cyber Security
+- `cybersec` - Cyber Security
   - finding bugs
   - patching them
 
-- `dev` - Web Development
+- `main` - Web Development
   - improvements or additions in frontend and/or backend
 
 ### For Cyber Security
@@ -24,7 +24,7 @@ This project may be a little harder for the beginners<br>
 No worries! During the whole event, some **hints** will be dropped within the respective **Issue**
 
 ### For Web Development
-Please refer to [`dev`](https://github.com/opencodeiiita/PhotoStore/tree/dev) branch
+Please refer to [`main`](https://github.com/opencodeiiita/PhotoStore/tree/main) branch
 
 ## Requirements
 - Basic understanding of backend and frontend
