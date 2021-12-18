@@ -6,7 +6,7 @@
 
 		<div class="navigation-links-container">
 			<div class="navigation-buttons-container">
-			{% if loggedIn %}
+			{% if logged_in %}
 				<a href="{{ url_for('profile') }}" title="Profile">
 					<div class="icon-container highlight white">
 						<img src="{{ url_for('avatar') }}">
@@ -20,7 +20,7 @@
 				</a>
 			</div>
 
-			{% if loggedIn %}
+			{% if logged_in %}
 			<div class="link-box">
 				<a class="underline" href="{{ url_for('logout') }}">Logout</a>
 			</div>

@@ -53,6 +53,9 @@ function loadImages() {
 				headerLoader = document.getElementById('header-loader');
 
 			if (imageList.length > 0) {
+				// set the height for the loader
+				headerLoader.style.height = '0.2em';
+
 				if (profileUploadInfo)
 					profileUploadInfo.innerHTML = `You have uploaded ${imageList.length} photos`;
 
@@ -356,7 +359,7 @@ function likeImage(imageBox) {
 
 				let numLikes = $('#numLikes')[0];
 				if (numLikes)
-					numLikes.innerHTML = json.totalLikes;
+					numLikes.innerHTML = json.total_likes;
 
 				likeButton.setAttribute('data-liked', value);
 
@@ -454,11 +457,11 @@ function deleteImage(imageBox) {
 
 				let numLikes = $('#numLikes')[0];
 				if (numLikes)
-					numLikes.innerHTML = json.totalLikes;
+					numLikes.innerHTML = json.total_likes;
 
 				let numViews = $('#numViews')[0];
 				if (numViews)
-					numViews.innerHTML = json.totalViews;
+					numViews.innerHTML = json.total_views;
 
 				imageBox.remove();
 

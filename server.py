@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from waitress import serve
+
 from app import app
 
 # number of threads to use for concurrent client requests

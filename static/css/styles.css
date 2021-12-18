@@ -90,14 +90,18 @@ header {
 }
 
 #header-loader {
+	/* this will be set when there are images to load */
+	height: 0;
+
+	/* this will be updated as the images load */
 	width: 0%;
-	height: 0.2em;
+
 	background-color: var(--accent-color);
 	transition: width var(--transition-duration);
 }
 
 #header-loader.completed {
-        width: 100%;
+	width: 100%;
 }
 
 footer {
