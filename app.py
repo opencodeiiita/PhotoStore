@@ -88,28 +88,55 @@ db_lock = Lock()
 
 
 def allowed_file(filename):
+    """
+    Check if the given 'filename' has allowed file extension
+    """
+
     return extension(filename).lower() in ALLOWED_EXTENSIONS
 
 
 def extension(filename):
+    """
+    Return the extension of the given 'filename'
+    """
+
     return "" if "." not in filename else filename.rsplit(".", 1)[1]
 
 
 def is_valid_username(username):
+    """
+    Check if the given 'username' is valid or not
+    """
+
     return username and re.match(r"^[0-9A-Z_]{4,32}$", username, flags=re.I)
 
 
 def is_logged_in():
+    """
+    Check if the client is logged in or not
+    with a valid JWT token
+    """
+
     token = request.cookies.get("jwt")
     jwt_data = decode_from_jwt(token)
     return bool(jwt_data)
 
 
 def encode_to_jwt(data):
+    """
+    Wrapper method to encode 'data' into
+    a JWT token using app's SECRET_KEY
+    """
+
     return jwt.encode(data, key=app.config["SECRET_KEY"], algorithm="HS256")
 
 
 def decode_from_jwt(token):
+    """
+    Wrapper method to decode 'token' into
+    JWT data using app's SECRET_KEY
+    """
+
     jwt_data = {}
 
     try:
@@ -125,6 +152,17 @@ def decode_from_jwt(token):
 
 
 def generate_captcha():
+    """
+    Generate a captcha using random text and other
+    related attributes:
+        - captcha value, answer
+        - captcha image encoded in base64
+        - **salted** captcha hash of the captcha value
+            to later verify the captcha response
+        - JWT token of the generated captcha hash
+            with an **expiry**
+    """
+
     # select a random length between 6 and 10
     captcha_length = random.choice(range(6, 10 + 1))
     captcha_value = "".join(
@@ -158,6 +196,10 @@ def generate_captcha():
 
 
 def verify_captcha(captcha_answer, token):
+    """
+    Verify the given 'captcha_answer' against the 'token'
+    """
+
     captcha_result = {"valid": False, "expired": False}
 
     if not captcha_answer:
@@ -187,6 +229,14 @@ def verify_captcha(captcha_answer, token):
 
 
 def no_cache(func):
+    """
+    Decorator to apply cache headers to the generated
+    response to prevent caching
+
+    NOTE: issues found on 'heroku' deployment
+    for stale JSON responses for '/api/image/*'
+    """
+
     def inner(*args, **kwargs):
         resp = func(*args, **kwargs)
         resp.headers["Cache-Control"] = "no-cache, no-store, max-age=0"
@@ -200,6 +250,12 @@ def no_cache(func):
 # `@app.errorhandler(413)` can also be used
 @app.errorhandler(RequestEntityTooLarge)
 def request_entity_too_large(_):
+    """
+    Error landing page for when the
+    request payload exceeds the defined
+    'MAX_CONTENT_LENGTH' value
+    """
+
     useragent = request.headers.get("User-Agent", "")
     contentlength = request.headers.get("Content-Length", "")
     max_size_limit = app.config["MAX_CONTENT_LENGTH"]
@@ -246,6 +302,11 @@ def community():
 
 @app.route("/api/captcha")
 def api_captcha():
+    """
+    API endpoint to generate a captcha
+    e.g. used when the user refreshes the captcha
+    """
+
     (
         _,  # captcha_value
         captcha_base64,
@@ -1130,7 +1191,13 @@ def reset_pwd():
     )
 
 
-if __name__ == "__main__":
+def main():
+    """
+    Main method to run the flask app
+    NOTE: contrary to './server.py', this applies
+    some formatting to the rendered HTML output
+    """
+
     # to keep the rendered HTML output clean of redundant whitespaces
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
@@ -1140,3 +1207,7 @@ if __name__ == "__main__":
     prettify = Prettify(app)
 
     app.run(host="localhost", port=8080)
+
+
+if __name__ == "__main__":
+    main()
