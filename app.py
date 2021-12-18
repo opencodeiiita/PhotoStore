@@ -186,6 +186,17 @@ def verify_captcha(captcha_answer, token):
     return captcha_result
 
 
+def no_cache(func):
+    def inner(*args, **kwargs):
+        resp = func(*args, **kwargs)
+        resp.headers["Cache-Control"] = "no-cache, no-store, max-age=0"
+        return resp
+
+    # for the view function name assertion by Flask
+    inner.__name__ = func.__name__
+    return inner
+
+
 # `@app.errorhandler(413)` can also be used
 @app.errorhandler(RequestEntityTooLarge)
 def request_entity_too_large(_):
@@ -249,6 +260,7 @@ def api_captcha():
 
 
 @app.route("/api/image/list")
+@no_cache
 def api_image_list():
     data = []
 
@@ -340,6 +352,7 @@ def api_image_get(id):
 
 
 @app.route("/api/image/info/<id>")
+@no_cache
 def api_image_info(id):
     try:
         id = int(id)
@@ -384,6 +397,7 @@ def api_image_info(id):
 
 
 @app.route("/api/image/delete/<id>", methods=["POST"])
+@no_cache
 def api_image_delete(id):
     try:
         id = int(id)
@@ -443,6 +457,7 @@ def api_image_delete(id):
 
 
 @app.route("/api/image/make_public", methods=["POST"])
+@no_cache
 def api_image_make_public():
     try:
         data = json.loads(request.data.decode("latin1"))
@@ -486,6 +501,7 @@ def api_image_make_public():
 
 
 @app.route("/api/image/like", methods=["POST"])
+@no_cache
 def api_image_like():
     try:
         data = json.loads(request.data.decode("latin1"))
@@ -548,6 +564,7 @@ def api_image_like():
 
 
 @app.route("/api/image/comment", methods=["POST"])
+@no_cache
 def api_image_comment():
     try:
         data = json.loads(request.data.decode("latin1"))
@@ -910,6 +927,7 @@ def profile():
 
 
 @app.route("/api/user/info/<username>")
+@no_cache
 def api_user_info(username):
     uploads = 0
     total_likes = 0
