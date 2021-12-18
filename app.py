@@ -69,7 +69,7 @@ app.config["CAPTCHA_KEY"] = CAPTCHA_KEY
 app.config["CAPTCHA_EXPIRE_SECONDS"] = 5 * 60  # 5 minutes
 app.config["MAX_CONTENT_LENGTH"] = 1 * 1000 * 1000  # 1MB limit
 app.config["DATABASE"] = "photostore.db"
-app.config["USE_CAPTCHA"] = False
+app.config["USE_CAPTCHA"] = True
 
 # apply Talisman
 csp = {
