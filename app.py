@@ -319,9 +319,6 @@ def api_image_get(id):
     owner = image.get("owner")
     filename = image.get("filename")
 
-    if not filename:
-        return ("", 404)
-
     # check if the client has access to view this image or not
     # this check prevents IDOR
     if not owner == username and not public:
@@ -337,6 +334,7 @@ def api_image_get(id):
 
         # images won't change, so they can be cached
         resp.headers["Cache-Control"] = "max-age=31536000, immutable"
+        return resp
 
     return ("", 404)
 
