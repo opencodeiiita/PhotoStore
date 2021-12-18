@@ -3,15 +3,15 @@ A **buggy** web application to store and share your photos
 
 ## Before you start
 This project is divided into two branches
-- `main` - Cyber Security
+- `cybersec` - Cyber Security
   - finding bugs
   - patching them
 
-- `dev` - Web Development
+- `main` - Web Development
   - improvements or additions in frontend and/or backend
 
 ### For Cyber Security
-Please refer to [`main`](https://github.com/opencodeiiita/PhotoStore/tree/main) branch
+Please refer to [`cybersec`](https://github.com/opencodeiiita/PhotoStore/tree/cybersec) branch
 
 ### For Web Development
 Other than the issues provided in [Issues](https://github.com/opencodeiiita/PhotoStore/issues)<br>
