@@ -440,6 +440,9 @@ def api_image_info(id):
     jwt_data = decode_from_jwt(token)
     username = jwt_data.get("username")
 
+    if not (public or owner == username):
+        return (jsonify(None), 403)
+
     info = {
         "timestamp": image.get("timestamp"),
         "owner": owner,
@@ -451,10 +454,7 @@ def api_image_info(id):
         "firstSeen": username and username not in image.get("views"),
     }
 
-    if public or owner == username:
-        return jsonify(info)
-
-    return (json.dumps(None), 403)
+    return jsonify(info)
 
 
 @app.route("/api/image/delete", methods=["POST"])
@@ -524,10 +524,10 @@ def api_image_make_public():
     try:
         data = json.loads(request.data.decode("latin1"))
         id = int(data.get("id"))
-        value = bool(data.get("value"))
+        make_public = bool(data.get("make_public"))
     except (json.JSONDecodeError, TypeError, ValueError):
         id = None
-        value = False
+        make_public = False
 
     if not id:
         return (json.dumps(None), 404)
@@ -553,7 +553,7 @@ def api_image_make_public():
             with TinyDB(app.config["DATABASE"]) as db:
                 images = db.table("images")
                 images.update(
-                    tinydb.operations.set("public", value),
+                    tinydb.operations.set("public", make_public),
                     doc_ids=[id]
                 )
 
@@ -568,10 +568,10 @@ def api_image_like():
     try:
         data = json.loads(request.data.decode("latin1"))
         id = int(data.get("id"))
-        value = bool(data.get("value"))
+        like = bool(data.get("like"))
     except (json.JSONDecodeError, TypeError, ValueError):
         id = None
-        value = False
+        like = False
 
     if not id:
         return (json.dumps(None), 404)
@@ -601,9 +601,9 @@ def api_image_like():
             image = images.get(doc_id=id)
             likes = image.get("likes")
 
-            if value and username not in likes:
+            if like and username not in likes:
                 likes.append(username)
-            elif not value and username in likes:
+            elif not like and username in likes:
                 likes.remove(username)
 
             images.update(
@@ -631,12 +631,17 @@ def api_image_comment():
     try:
         data = json.loads(request.data.decode("latin1"))
         id = int(data.get("id"))
-        value = data.get("value")
+        comment = data.get("comment")
+
+        # this prevents HTML code from being stored
+        # directly into the database
+        # thus preventing stored XSS vulnerability
+        comment = comment and escape(comment)
     except (json.JSONDecodeError, TypeError, ValueError):
         id = None
-        value = None
+        comment = None
 
-    if not id or not value:
+    if not id or not comment:
         return (json.dumps(None), 404)
 
     token = request.cookies.get("jwt")
@@ -665,7 +670,7 @@ def api_image_comment():
 
             comments.append({
                 "username": username,
-                "comment": escape(value),
+                "comment": comment,
                 "timestamp": timestamp
             })
 

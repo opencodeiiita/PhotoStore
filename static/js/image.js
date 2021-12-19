@@ -196,10 +196,10 @@ function createImageBox(id, viewingProfile, resolve) {
 
 				downloadImageLink.href = `/api/image/get/${id}`;
 
-				let value = info.public ? 'public' : 'private';
+				let visibility = info.public ? 'public' : 'private';
 
-				imageBox.setAttribute('data-visibility', value);
-				changeImageVisibilityIconImage.src = `/static/icons/${value}.png`;
+				imageBox.setAttribute('data-visibility', visibility);
+				changeImageVisibilityIconImage.src = `/static/icons/${visibility}.png`;
 
 				$(changeImageVisibilityIcon).on('click', () => {
 					makeImagePublic(imageBox);
@@ -307,11 +307,11 @@ function makeImagePublic(imageBox) {
 	let imageNavigationContainer = imageBox.querySelector('.image-navigation-container'),
 		makePublicIcon = imageNavigationContainer.querySelector('.make-public'),
 		img = makePublicIcon.querySelector('img'),
-		value = imageBox.getAttribute('data-visibility') === 'public' ? 'private' : 'public';
+		newVisibility = imageBox.getAttribute('data-visibility') === 'public' ? 'private' : 'public';
 
 	let json = JSON.stringify({
 		id: id,
-		value: value === 'public'
+		makePublic: newVisibility === 'public'
 	});
 
 	let xhr = new XMLHttpRequest();
@@ -320,8 +320,8 @@ function makeImagePublic(imageBox) {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			if (xhr.status === 200) {
-				imageBox.setAttribute('data-visibility', value);
-				img.src = `/static/icons/${value}.png`;
+				imageBox.setAttribute('data-visibility', newVisibility);
+				img.src = `/static/icons/${newVisibility}.png`;
 			}
 			else
 			if (xhr.status === 403)
@@ -342,11 +342,11 @@ function likeImage(imageBox) {
 	let imageLikesContainer = imageBox.querySelector('.image-likes-container'),
 		likes = imageLikesContainer.querySelector('.image-likes'),
 		likeButton = imageLikesContainer.querySelector('.icon-container'),
-		value = !(likeButton.getAttribute('data-liked') === 'true');
+		like = !(likeButton.getAttribute('data-liked') === 'true');
 
 	let json = JSON.stringify({
 		id: id,
-		value: value
+		like: like
 	});
 
 	let xhr = new XMLHttpRequest();
@@ -361,9 +361,9 @@ function likeImage(imageBox) {
 				if (numLikes)
 					numLikes.innerHTML = json.total_likes;
 
-				likeButton.setAttribute('data-liked', value);
+				likeButton.setAttribute('data-liked', like);
 
-				if (value)
+				if (like)
 					likeButton.classList.add('dislike');
 				else
 					likeButton.classList.remove('dislike');
@@ -399,11 +399,11 @@ function postComment(imageBox) {
 
 	let id = imageBox.getAttribute('data-id'),
 		commentInput = imageBox.querySelector('.comment-input'),
-		value = commentInput.value;
+		comment = commentInput.value;
 
 	let json = JSON.stringify({
 		id: id,
-		value: value
+		comment: comment
 	});
 
 	let xhr = new XMLHttpRequest();
