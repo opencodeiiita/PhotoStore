@@ -10,9 +10,6 @@ from hashlib import md5
 import mimetypes
 from pathlib import Path
 
-# TODO: add CSRF protection
-# - flask-wtf
-
 # for image handling
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
@@ -32,6 +29,7 @@ from flask import (
 )
 from werkzeug.exceptions import RequestEntityTooLarge
 from flask_talisman import Talisman
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from functools import wraps
 
 # we will be using hashes
@@ -82,6 +80,9 @@ csp = {
 }
 
 talisman = Talisman(app, force_https=False, content_security_policy=csp)
+
+# enable CSRF validation
+csrf = CSRFProtect(app)
 
 # for CAPTCHA
 captcha = ImageCaptcha()
@@ -265,6 +266,7 @@ def request_entity_too_large(_):
 
     errors = [
         "Woah! Your file is too powerful!",
+        f"Client IP: {request.remote_addr}",
         f"User-Agent: {useragent}",
         f"Content-Length: {contentlength}",
         f"Maximum allowed size: {max_size_limit} bytes",
@@ -278,6 +280,40 @@ def request_entity_too_large(_):
             logged_in=True,
         ),
         413
+    )
+
+    return resp
+
+
+@app.errorhandler(CSRFError)
+def csrf_error(_):
+    """
+    Error landing page for CSRF
+    """
+
+    # TODO: create a decorator for all these errors
+    # to re-use the same structure of these methods
+    # or work on some error landing pages
+    # see: https://github.com/opencodeiiita/PhotoStore/issues/95
+
+    useragent = request.headers.get("User-Agent", "")
+    logged_in = is_logged_in()
+
+    errors = [
+        "Woah! Where you coming from?",
+        "CSRF, Cross Site Request Forgery, is detected!",
+        f"Client IP: {request.remote_addr}",
+        f"User-Agent: {useragent}",
+    ]
+
+    resp = make_response(
+        render_template(
+            "layouts/error.html",
+            errors=errors,
+            return_url=request.referrer,
+            logged_in=logged_in,
+        ),
+        400
     )
 
     return resp

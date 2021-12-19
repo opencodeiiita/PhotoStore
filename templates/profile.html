@@ -12,6 +12,7 @@ Profile
 		<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
 
 		<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
+			<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 			<input id="avatarChange" type=file name="avatar" accept="image/*">
 
 			<div id="profile-image" title="Change avatar">

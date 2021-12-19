@@ -10,6 +10,8 @@ Sign up
 
 {% block content %}
 <form method=post>
+	<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
 	<div class="input-container">
 		<label for="username">Username</label>
 		<input id="username" type=text name="username"

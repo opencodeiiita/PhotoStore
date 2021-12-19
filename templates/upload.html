@@ -10,6 +10,8 @@ Upload image
 
 {% block content %}
 <form method=post enctype=multipart/form-data>
+	<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
 	<div class="input-container button" title="File size should be under 1MB">
 		<input type=file name="fileToUpload" accept="image/*">
 	</div>

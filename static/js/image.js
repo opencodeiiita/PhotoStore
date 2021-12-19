@@ -14,6 +14,17 @@ function fromTimestamp(timestamp) {
 	return new Date(timestamp * 1000).toUTCString();
 }
 
+// to set the CSRF token for the XHR
+function setCSRFToken(xhr) {
+	// uses the '<input>' element defined in '<head>'
+	try {
+		let csrf_token = $("#csrf_token")[0].value;
+		xhr.setRequestHeader('X-CSRFToken', csrf_token);
+	}
+	catch (err) {
+	}
+}
+
 // We can keep this function in some other file
 // if it is required somewhere else
 function getUsername() {
@@ -316,6 +327,7 @@ function makeImagePublic(imageBox) {
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('POST', '/api/image/make_public');
+	setCSRFToken(xhr);
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -351,6 +363,7 @@ function likeImage(imageBox) {
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('POST', '/api/image/like');
+	setCSRFToken(xhr);
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -408,6 +421,7 @@ function postComment(imageBox) {
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('POST', '/api/image/comment');
+	setCSRFToken(xhr);
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -453,6 +467,7 @@ function deleteImage(imageBox) {
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('POST', '/api/image/delete');
+	setCSRFToken(xhr);
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
