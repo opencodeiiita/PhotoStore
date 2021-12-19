@@ -457,12 +457,13 @@ def api_image_info(id):
     return (json.dumps(None), 403)
 
 
-@app.route("/api/image/delete/<id>", methods=["POST"])
+@app.route("/api/image/delete", methods=["POST"])
 @no_cache
-def api_image_delete(id):
+def api_image_delete():
     try:
-        id = int(id)
-    except ValueError:
+        data = json.loads(request.data.decode("latin1"))
+        id = int(data.get("id"))
+    except (json.JSONDecodeError, TypeError, ValueError):
         id = None
 
     if not id:

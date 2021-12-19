@@ -447,8 +447,12 @@ function postComment(imageBox) {
 function deleteImage(imageBox) {
 	let id = imageBox.getAttribute('data-id');
 
+	let json = JSON.stringify({
+		id: id
+	});
+
 	let xhr = new XMLHttpRequest();
-	xhr.open('POST', `/api/image/delete/${id}`);
+	xhr.open('POST', '/api/image/delete');
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -489,7 +493,7 @@ function deleteImage(imageBox) {
 		}
 	};
 
-	xhr.send();
+	xhr.send(json);
 }
 
 function showComment(commentBox) {
