@@ -10,6 +10,9 @@ from hashlib import md5
 import mimetypes
 from pathlib import Path
 
+# TODO: add CSRF protection
+# - flask-wtf
+
 # for image handling
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
@@ -29,6 +32,7 @@ from flask import (
 )
 from werkzeug.exceptions import RequestEntityTooLarge
 from flask_talisman import Talisman
+from functools import wraps
 
 # we will be using hashes
 # from werkzeug.utils import secure_filename
@@ -237,13 +241,12 @@ def no_cache(func):
     for stale JSON responses for '/api/image/*'
     """
 
+    @wraps(func)
     def inner(*args, **kwargs):
-        resp = func(*args, **kwargs)
+        resp = make_response(func(*args, **kwargs))
         resp.headers["Cache-Control"] = "no-cache, no-store, max-age=0"
         return resp
 
-    # for the view function name assertion by Flask
-    inner.__name__ = func.__name__
     return inner
 
 
@@ -875,7 +878,10 @@ def signup():
                 accounts.insert(account)
 
         resp = make_response(redirect(url_for("profile")))
-        resp.set_cookie("jwt", encode_to_jwt({"username": username}))
+        resp.set_cookie(
+            "jwt",
+            encode_to_jwt({"username": username})
+        )
         return resp
 
     return render_template(
@@ -933,7 +939,10 @@ def login():
         if user_registered:
             if valid_credentials:
                 resp = make_response(redirect(url_for("profile")))
-                resp.set_cookie("jwt", encode_to_jwt({"username": username}))
+                resp.set_cookie(
+                    "jwt",
+                    encode_to_jwt({"username": username}),
+                )
                 return resp
             else:
                 flash("Invalid credentials!", "error")
