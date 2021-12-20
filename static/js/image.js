@@ -16,9 +16,9 @@ function fromTimestamp(timestamp) {
 
 // to set the CSRF token for the XHR
 function setCSRFToken(xhr) {
-	// uses the '<input>' element defined in '<head>'
+	// uses the '<meta>' element defined in '<head>'
 	try {
-		let csrf_token = $("#csrf_token")[0].value;
+		let csrf_token = $("#csrf_token")[0].content;
 		xhr.setRequestHeader('X-CSRFToken', csrf_token);
 	}
 	catch (err) {
@@ -64,8 +64,8 @@ function loadImages() {
 				headerLoader = document.getElementById('header-loader');
 
 			if (imageList.length > 0) {
-				// set the height for the loader
-				headerLoader.style.height = '0.2em';
+				// update the state of the loader
+				headerLoader.classList.add('active');
 
 				if (profileUploadInfo)
 					profileUploadInfo.innerHTML = `You have uploaded ${imageList.length} photos`;
@@ -91,6 +91,7 @@ function loadImages() {
 			}
 
 			headerLoader.style.width = '100%';
+			headerLoader.classList.remove('active');
 			headerLoader.classList.add('completed');
 		}
 	};

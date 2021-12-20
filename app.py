@@ -92,7 +92,7 @@ TinyDB.default_table_name = "photostore"
 db_lock = Lock()
 
 
-def allowed_file(filename):
+def is_allowed_file(filename):
     """
     Check if the given 'filename' has allowed file extension
     """
@@ -325,7 +325,8 @@ def index():
     return render_template(
         "index.html",
         pagetype="index",
-        logged_in=logged_in
+        logged_in=logged_in,
+        preload_image_scripts=True
     )
 
 
@@ -335,7 +336,8 @@ def community():
     return render_template(
         "community.html",
         pagetype="community",
-        logged_in=logged_in
+        logged_in=logged_in,
+        preload_image_scripts=True
     )
 
 
@@ -754,7 +756,7 @@ def avatar():
         # extract the file extension
         ext = extension(file.filename)
 
-        if not allowed_file(file.filename):
+        if not is_allowed_file(file.filename):
             flash(f"Invalid file extension: `{ext}`", "error")
             return redirect(return_url)
 
@@ -771,7 +773,7 @@ def avatar():
             mimetype = image.get_format_mimetype()
             ext_from_mime = mimetypes.guess_extension(mimetype)
 
-            if not allowed_file(ext_from_mime):
+            if not is_allowed_file(ext_from_mime):
                 flash(f"Invalid mimetype: `{mimetype}`", "error")
                 return redirect(return_url)
 
@@ -1035,6 +1037,7 @@ def profile():
         total_views=total_views,
         pagetype="profile",
         logged_in=True,
+        preload_image_scripts=True
     )
 
 
@@ -1109,7 +1112,7 @@ def upload():
 
         ext = extension(file.filename)
 
-        if allowed_file(file.filename):
+        if is_allowed_file(file.filename):
             timestamp = time.time()
             timestamp_hash = md5(
                 str(timestamp).encode("utf-8")

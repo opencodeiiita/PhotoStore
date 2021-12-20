@@ -31,7 +31,7 @@ img {
 	vertical-align: middle;
 	width: 100%;
 	height: auto;
-	object-fit: contain
+	object-fit: contain;
 }
 
 html {
@@ -90,6 +90,9 @@ header {
 }
 
 #header-loader {
+	position: absolute;
+	top: 0;
+
 	/* this will be set when there are images to load */
 	height: 0;
 
@@ -97,10 +100,15 @@ header {
 	width: 0%;
 
 	background-color: var(--accent-color);
-	transition: width var(--transition-duration);
+	transition: height var(--transition-duration), width var(--transition-duration);
+}
+
+#header-loader.active {
+	height: 0.1em;
 }
 
 #header-loader.completed {
+	height: 0;
 	width: 100%;
 }
 
