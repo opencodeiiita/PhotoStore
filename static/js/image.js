@@ -323,7 +323,7 @@ function makeImagePublic(imageBox) {
 
 	let json = JSON.stringify({
 		id: id,
-		makePublic: newVisibility === 'public'
+		make_public: newVisibility === 'public'
 	});
 
 	let xhr = new XMLHttpRequest();
