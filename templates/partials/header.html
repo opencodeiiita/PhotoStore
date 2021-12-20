@@ -11,13 +11,13 @@
 			{% if logged_in %}
 				<a href="{{ url_for('profile') }}" title="Profile">
 					<div class="icon-container highlight white">
-						<img src="{{ url_for('avatar') }}">
+						<img src="{{ url_for('avatar') }}" alt="profile">
 					</div>
 				</a>
 			{% endif %}
 				<a href="{{ url_for('community') }}" title="Community">
 					<div class="icon-container highlight white">
-						<img src="{{ url_for('static', filename='icons/community.png') }}">
+						<img src="{{ url_for('static', filename='icons/community.png') }}" alt="community">
 					</div>
 				</a>
 			</div>

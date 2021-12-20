@@ -16,12 +16,12 @@ Profile
 			<input id="avatarChange" type=file name="avatar" accept="image/*">
 
 			<div id="profile-image" title="Change avatar">
-				<img src="{{ url_for('avatar') }}">
+				<img src="{{ url_for('avatar') }}" alt="avatar">
 			</div>
 		</form>
 	</div>
 
-	<a class="underline reset-password" href="{{ url_for('reset_pwd') }}" title="Reset password" >Reset password</a>
+	<a class="underline reset-password" href="{{ url_for('reset_pwd') }}" title="Reset password">Reset password</a>
 </div>
 
 <div class="profile-navigation-container">
@@ -30,7 +30,7 @@ Profile
 
 		<a href="{{ url_for('upload') }}" title="Upload image">
 			<div class="icon-container highlight black">
-				<img src="{{ url_for('static', filename='icons/upload.png') }}">
+				<img src="{{ url_for('static', filename='icons/upload.png') }}" alt="upload">
 			</div>
 		</a>
 	</div>
@@ -38,12 +38,12 @@ Profile
 	<div class="profile-meta-container">
 		<div class="profile-meta">
 			<span id="numViews">{{ total_views }}</span>
-			<img class="icon-container" src="{{ url_for('static', filename='icons/views.png') }}">
+			<img class="icon-container" src="{{ url_for('static', filename='icons/views.png') }}" alt="views">
 		</div>
 
 		<div class="profile-meta">
 			<span id="numLikes">{{ total_likes }}</span>
-			<img class="icon-container" src="{{ url_for('static', filename='icons/like.png') }}">
+			<img class="icon-container" src="{{ url_for('static', filename='icons/like.png') }}" alt="likes">
 		</div>
 	</div>
 
