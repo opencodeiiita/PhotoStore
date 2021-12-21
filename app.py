@@ -368,31 +368,33 @@ def api_image_list():
 
     token = request.cookies.get("jwt")
     jwt_data = decode_from_jwt(token)
-    owner = jwt_data.get("username")
+    username = jwt_data.get("username")
 
     which_page = request.args.get("pagetype", "index")
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            data = []
-            images = db.table("images")
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        data = []
+        images = db.table("images")
 
-            if which_page == "profile" and owner:
-                data += images.search(Query().owner == owner)
-            else:
-                data += images.search(Query().public == True)  # noqa: E712
+        if which_page == "profile" and username:
+            data += images.search(Query().owner == username)
+        else:
+            data += images.search(Query().public == True)  # noqa: E712
 
-            if which_page == "index":
-                # sort such that images with most likes and views comes first
-                data.sort(
-                    key=lambda image: len(image["likes"]) + len(image["views"]),
-                    reverse=True,
-                )
-                data = [image.doc_id for image in data[:4]]
-            else:
-                # sort such that most recent images comes first
-                data.sort(key=lambda image: image["timestamp"], reverse=True)
-                data = [image.doc_id for image in data]
+        if which_page == "index":
+            # sort such that images with most likes and views comes first
+            data.sort(
+                key=lambda image: len(image["likes"]) + len(image["views"]),
+                reverse=True,
+            )
+            data = [image.doc_id for image in data[:4]]
+        else:
+            # sort such that most recent images comes first
+            data.sort(key=lambda image: image["timestamp"], reverse=True)
+            data = [image.doc_id for image in data]
 
     return jsonify(data)
 
@@ -411,10 +413,12 @@ def api_image_get(id):
     jwt_data = decode_from_jwt(token)
     username = jwt_data.get("username")
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        image = images.get(doc_id=id)
 
     if not image:
         return ("", 404)
@@ -429,17 +433,19 @@ def api_image_get(id):
         return ("", 403)
 
     # update the views if this image is accessible by the current user
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            views = image.get("views")
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        views = image.get("views")
 
-            if username and username not in views:
-                views.append(username)
-                images.update(
-                    tinydb.operations.set("views", views),
-                    doc_ids=[id]
-                )
+        if username and username not in views:
+            views.append(username)
+            images.update(
+                tinydb.operations.set("views", views),
+                doc_ids=[id]
+            )
 
     filepath = os.path.join(app.config["UPLOAD_DIR"], filename)
 
@@ -469,10 +475,12 @@ def api_image_info(id):
 
     image = None
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        image = images.get(doc_id=id)
 
     if not image:
         return (json.dumps(None), 404)
@@ -515,10 +523,12 @@ def api_image_delete():
 
     image = None
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        image = images.get(doc_id=id)
 
     if not image:
         return (json.dumps(None), 404)
@@ -536,23 +546,25 @@ def api_image_delete():
         if os.path.isfile(filepath):
             os.remove(filepath)
 
-            with db_lock:
-                with TinyDB(app.config["DATABASE"]) as db:
-                    accounts = db.table("accounts")
-                    accounts.update(
-                        tinydb.operations.decrement("uploads"),
-                        Query().username == username,
-                    )
+            with (
+                db_lock,
+                TinyDB(app.config["DATABASE"]) as db
+            ):
+                accounts = db.table("accounts")
+                accounts.update(
+                    tinydb.operations.decrement("uploads"),
+                    Query().username == username,
+                )
 
-                    images = db.table("images")
-                    image = images.remove(doc_ids=[id])
+                images = db.table("images")
+                image = images.remove(doc_ids=[id])
 
-                    imageList = images.search(Query().owner == username)
-                    total_likes = total_views = 0
+                imageList = images.search(Query().owner == username)
+                total_likes = total_views = 0
 
-                    for image in imageList:
-                        total_likes += len(image.get("likes"))
-                        total_views += len(image.get("views"))
+                for image in imageList:
+                    total_likes += len(image.get("likes"))
+                    total_views += len(image.get("views"))
 
             info = {"total_likes": total_likes, "total_views": total_views}
             return jsonify(info)
@@ -578,10 +590,12 @@ def api_image_make_public():
 
     image = None
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        image = images.get(doc_id=id)
 
     if not image:
         return (json.dumps(None), 404)
@@ -593,13 +607,15 @@ def api_image_make_public():
     username = jwt_data.get("username")
 
     if owner == username:
-        with db_lock:
-            with TinyDB(app.config["DATABASE"]) as db:
-                images = db.table("images")
-                images.update(
-                    tinydb.operations.set("public", make_public),
-                    doc_ids=[id]
-                )
+        with (
+            db_lock,
+            TinyDB(app.config["DATABASE"]) as db
+        ):
+            images = db.table("images")
+            images.update(
+                tinydb.operations.set("public", make_public),
+                doc_ids=[id]
+            )
 
             return (json.dumps(True), 200)
 
@@ -629,36 +645,39 @@ def api_image_like():
 
     image = None
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        image = images.get(doc_id=id)
 
     if not image:
         return (json.dumps(None), 404)
 
     total_likes = 0
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
-            likes = image.get("likes")
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        likes = image.get("likes")
 
-            if like and username not in likes:
-                likes.append(username)
-            elif not like and username in likes:
-                likes.remove(username)
+        if like and username not in likes:
+            likes.append(username)
+        elif not like and username in likes:
+            likes.remove(username)
 
-            images.update(
-                tinydb.operations.set("likes", likes),
-                doc_ids=[id]
-            )
+        images.update(
+            tinydb.operations.set("likes", likes),
+            doc_ids=[id]
+        )
 
-            imageList = images.search(Query().owner == username)
+        imageList = images.search(Query().owner == username)
 
-            for image in imageList:
-                total_likes += len(image.get("likes"))
+        for image in imageList:
+            total_likes += len(image.get("likes"))
 
     return (
         json.dumps({
@@ -697,31 +716,34 @@ def api_image_comment():
 
     image = None
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        image = images.get(doc_id=id)
 
     if not image:
         return (json.dumps(None), 404)
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            images = db.table("images")
-            image = images.get(doc_id=id)
-            comments = image.get("comments")
-            timestamp = int(time.time())
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        images = db.table("images")
+        comments = image.get("comments")
+        timestamp = int(time.time())
 
-            comments.append({
-                "username": username,
-                "comment": comment,
-                "timestamp": timestamp
-            })
+        comments.append({
+            "username": username,
+            "comment": comment,
+            "timestamp": timestamp
+        })
 
-            images.update(
-                tinydb.operations.set("comments", comments),
-                doc_ids=[id]
-            )
+        images.update(
+            tinydb.operations.set("comments", comments),
+            doc_ids=[id]
+        )
 
     return (json.dumps({"comments": comments}), 200)
 
@@ -798,13 +820,15 @@ def avatar():
             # save the image in PNG-format
             image.save(filepath, format="PNG")
 
-            with db_lock:
-                with TinyDB(app.config["DATABASE"]) as db:
-                    accounts = db.table("accounts")
-                    accounts.update(
-                        tinydb.operations.set("avatar", filename),
-                        Query().username == username,
-                    )
+            with (
+                db_lock,
+                TinyDB(app.config["DATABASE"]) as db
+            ):
+                accounts = db.table("accounts")
+                accounts.update(
+                    tinydb.operations.set("avatar", filename),
+                    Query().username == username,
+                )
 
             flash("Avatar updated successfully!", "success")
 
@@ -819,13 +843,15 @@ def avatar_username(username):
     filename = None
 
     if is_valid_username(username):
-        with db_lock:
-            with TinyDB(app.config["DATABASE"]) as db:
-                accounts = db.table("accounts")
-                account = accounts.get(Query().username == username)
+        with (
+            db_lock,
+            TinyDB(app.config["DATABASE"]) as db
+        ):
+            accounts = db.table("accounts")
+            account = accounts.get(Query().username == username)
 
-                if account:
-                    filename = account.get("avatar")
+            if account:
+                filename = account.get("avatar")
 
     if (
         filename and
@@ -889,11 +915,13 @@ def signup():
 
         user_registered = True
 
-        with db_lock:
-            with TinyDB(app.config["DATABASE"]) as db:
-                accounts = db.table("accounts")
-                account = accounts.get(Query().username == username)
-                user_registered = account is not None
+        with (
+            db_lock,
+            TinyDB(app.config["DATABASE"]) as db
+        ):
+            accounts = db.table("accounts")
+            account = accounts.get(Query().username == username)
+            user_registered = account is not None
 
         if user_registered:
             flash("Username already registered!", "error")
@@ -913,10 +941,12 @@ def signup():
             "uploads": 0,
         }
 
-        with db_lock:
-            with TinyDB(app.config["DATABASE"]) as db:
-                accounts = db.table("accounts")
-                accounts.insert(account)
+        with (
+            db_lock,
+            TinyDB(app.config["DATABASE"]) as db
+        ):
+            accounts = db.table("accounts")
+            accounts.insert(account)
 
         resp = make_response(redirect(url_for("profile")))
         resp.set_cookie(
@@ -965,17 +995,19 @@ def login():
         user_registered = False
         valid_credentials = False
 
-        with db_lock:
-            with TinyDB(app.config["DATABASE"]) as db:
-                accounts = db.table("accounts")
-                account = accounts.get(Query().username == username)
+        with (
+            db_lock,
+            TinyDB(app.config["DATABASE"]) as db
+        ):
+            accounts = db.table("accounts")
+            account = accounts.get(Query().username == username)
 
-                if account:
-                    user_registered = True
-                    passwd_hash = account.get("passwd_hash").encode("latin1")
-                    valid_credentials = bcrypt.checkpw(
-                        password.encode("latin1"), passwd_hash
-                    )
+            if account:
+                user_registered = True
+                passwd_hash = account.get("passwd_hash").encode("latin1")
+                valid_credentials = bcrypt.checkpw(
+                    password.encode("latin1"), passwd_hash
+                )
 
         if user_registered:
             if valid_credentials:
@@ -1017,20 +1049,22 @@ def profile():
     uploads = 0
     total_likes = total_views = 0
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            accounts = db.table("accounts")
-            account = accounts.get(Query().username == username)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        accounts = db.table("accounts")
+        account = accounts.get(Query().username == username)
 
-            if account:
-                uploads = account.get("uploads", 0)
+        if account:
+            uploads = account.get("uploads", 0)
 
-                images = db.table("images")
-                imageList = images.search(Query().owner == username)
+            images = db.table("images")
+            imageList = images.search(Query().owner == username)
 
-                for image in imageList:
-                    total_likes += len(image.get("likes"))
-                    total_views += len(image.get("views"))
+            for image in imageList:
+                total_likes += len(image.get("likes"))
+                total_views += len(image.get("views"))
 
     return render_template(
         "profile.html",
@@ -1053,20 +1087,22 @@ def api_user_info(username):
 
     account = None
 
-    with db_lock:
-        with TinyDB(app.config["DATABASE"]) as db:
-            accounts = db.table("accounts")
-            account = accounts.get(Query().username == username)
+    with (
+        db_lock,
+        TinyDB(app.config["DATABASE"]) as db
+    ):
+        accounts = db.table("accounts")
+        account = accounts.get(Query().username == username)
 
-            if account:
-                uploads = account.get("uploads", 0)
+        if account:
+            uploads = account.get("uploads", 0)
 
-                images = db.table("images")
-                imageList = images.search(Query().owner == username)
+            images = db.table("images")
+            imageList = images.search(Query().owner == username)
 
-                for image in imageList:
-                    total_likes += len(image.get("likes"))
-                    total_views += len(image.get("views"))
+            for image in imageList:
+                total_likes += len(image.get("likes"))
+                total_views += len(image.get("views"))
 
     if not account:
         return (json.dumps(None), 404)
@@ -1136,16 +1172,18 @@ def upload():
                 "comments": [],
             }
 
-            with db_lock:
-                with TinyDB(app.config["DATABASE"]) as db:
-                    accounts = db.table("accounts")
-                    accounts.update(
-                        tinydb.operations.increment("uploads"),
-                        Query().username == username,
-                    )
+            with (
+                db_lock,
+                TinyDB(app.config["DATABASE"]) as db
+            ):
+                accounts = db.table("accounts")
+                accounts.update(
+                    tinydb.operations.increment("uploads"),
+                    Query().username == username,
+                )
 
-                    images = db.table("images")
-                    images.insert(image)
+                images = db.table("images")
+                images.insert(image)
 
             flash("File uploaded successfully!", "success")
         else:
@@ -1210,17 +1248,19 @@ def reset_pwd():
         account = None
         valid_credentials = False
 
-        with db_lock:
-            with TinyDB(app.config["DATABASE"]) as db:
-                accounts = db.table("accounts")
-                account = accounts.get(Query().username == username)
+        with (
+            db_lock,
+            TinyDB(app.config["DATABASE"]) as db
+        ):
+            accounts = db.table("accounts")
+            account = accounts.get(Query().username == username)
 
-                if account:
-                    passwd_hash = account.get("passwd_hash").encode("latin1")
-                    valid_credentials = bcrypt.checkpw(
-                        current_password.encode("latin1"),
-                        passwd_hash
-                    )
+            if account:
+                passwd_hash = account.get("passwd_hash").encode("latin1")
+                valid_credentials = bcrypt.checkpw(
+                    current_password.encode("latin1"),
+                    passwd_hash
+                )
 
         if valid_credentials:
             passwd_salt = bcrypt.gensalt(rounds=12)
@@ -1231,10 +1271,12 @@ def reset_pwd():
 
             account["passwd_hash"] = passwd_hash
 
-            with db_lock:
-                with TinyDB(app.config["DATABASE"]) as db:
-                    accounts = db.table("accounts")
-                    accounts.update(account)
+            with (
+                db_lock,
+                TinyDB(app.config["DATABASE"]) as db
+            ):
+                accounts = db.table("accounts")
+                accounts.update(account)
 
             flash("Password updated successfully", "success")
             return redirect(url_for("profile"))
