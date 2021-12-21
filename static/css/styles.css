@@ -100,7 +100,7 @@ header {
 	width: 0%;
 
 	background-color: var(--accent-color);
-	transition: height var(--transition-duration), width var(--transition-duration);
+	transition: height var(--transition-duration) ease var(--transition-duration), width var(--transition-duration);
 }
 
 #header-loader.active {
@@ -731,7 +731,7 @@ a.reset-password {
 }
 
 .image-likes-container .icon-container {
-	transition: transform var(--transition-duration);
+	transition: border var(--transition-duration), transform var(--transition-duration);
 }
 
 .image-likes-container .icon-container.dislike {
