@@ -25,7 +25,7 @@ It will make it easier for the mentors to get to know about feature
 
 ## Requirements
 - Basic understanding of backend and frontend
-- Python3 (3.7 or newer is expected)
+- Python3 (3.9.9 or newer is expected)
 - `pip` (package installer for Python)
 - `virtualenv`
 
