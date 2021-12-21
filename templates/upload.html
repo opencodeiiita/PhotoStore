@@ -9,16 +9,16 @@ Upload image
 {% endblock heading %}
 
 {% block content %}
-<form method=post enctype=multipart/form-data>
+<form method="POST" enctype="multipart/form-data">
 	<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 
 	<div class="input-container button" title="File size should be under 1MB">
-		<input type=file name="fileToUpload" accept="image/*">
+		<input type="file" name="fileToUpload" accept="image/*">
 	</div>
 
 	<div class="input-container">
 		<label for="description">Description</label>
-		<input id="description" type=text name="description"
+		<input id="description" type="text" name="description"
 			placeholder="Description"
 			title="Provide a nice and short description to your photo"
 			required
@@ -26,7 +26,7 @@ Upload image
 	</div>
 
 	<div class="input-container button green">
-		<input type=submit value="Upload">
+		<input type="submit" value="Upload">
 	</div>
 </form>
 {% endblock content %}

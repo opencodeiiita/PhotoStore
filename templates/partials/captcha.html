@@ -15,14 +15,13 @@
 	<div class="input-container">
 		<label for="captcha_answer">Captcha</label>
 
-		<input id="captcha_answer" type=text name="captcha_answer"
+		<input id="captcha_answer" type="text" name="captcha_answer"
 			placeholder="Solve the captcha"
 			title="It only contains lowercase alphabets"
 			required
 		>
 
-		<input id="captcha-jwt" type=hidden name="captcha_jwt" value="{{ captcha_jwt }}">
+		<input id="captcha-jwt" type="hidden" name="captcha_jwt" value="{{ captcha_jwt }}">
 	</div>
 </div>
-
 {% endif %}

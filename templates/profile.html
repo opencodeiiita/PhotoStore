@@ -11,9 +11,9 @@ Profile
 	<div class="username-container">
 		<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
 
-		<form id="avatarForm" action="{{ url_for('avatar') }}" method=post enctype=multipart/form-data>
+		<form id="avatarForm" action="{{ url_for('avatar') }}" method="POST" enctype="multipart/form-data">
 			<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
-			<input id="avatarChange" type=file name="avatar" accept="image/*">
+			<input id="avatarChange" type="file" name="avatar" accept="image/*">
 
 			<div id="profile-image" title="Change avatar">
 				<img src="{{ url_for('avatar') }}" alt="avatar">

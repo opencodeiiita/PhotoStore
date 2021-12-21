@@ -111,7 +111,7 @@
 		</div>
 
 		<div class="comment-input-container">
-			<form class="comment-input-form">
+			<form class="comment-input-form" method="POST">
 				<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 				<input type="text" class="comment-input" value="" placeholder="Write a comment" required>
 			</form>

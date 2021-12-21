@@ -9,12 +9,12 @@ Sign up
 {% endblock heading %}
 
 {% block content %}
-<form method=post>
+<form method="POST">
 	<input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
 
 	<div class="input-container">
 		<label for="username">Username</label>
-		<input id="username" type=text name="username"
+		<input id="username" type="text" name="username"
 			placeholder="Username"
 			minlength="4" maxlength="32"
 			title="Only alphabets, digits and underscores are allowed"
@@ -24,7 +24,7 @@ Sign up
 
 	<div class="input-container">
 		<label for="password">Password</label>
-		<input id="password" type=password name="password"
+		<input id="password" type="password" name="password"
 			placeholder="Please make me strong"
 			minlength="8" maxlength="32"
 			title="Please make me strong!!!"
@@ -34,7 +34,7 @@ Sign up
 
 	<div class="input-container">
 		<label for="confirm-password">Confirm Password</label>
-		<input id="confirm-password" type=password name="confirm-password" placeholder="Confirm Password"
+		<input id="confirm-password" type="password" name="confirm-password" placeholder="Confirm Password"
 			minlength="8" maxlength="32"
 			title="Type it again, do you remember it?"
 			required
@@ -44,7 +44,7 @@ Sign up
 	{% include 'partials/captcha.html' %}
 
 	<div class="input-container button green">
-		<input type=submit value="Submit">
+		<input type="submit" value="Submit">
 	</div>
 </form>
 {% endblock content %}
