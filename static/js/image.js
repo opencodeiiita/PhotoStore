@@ -57,42 +57,46 @@ function loadImages() {
 
 	xhr.onreadystatechange = async function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
-			let imageList = JSON.parse(xhr.responseText),
-				profileUploadInfo = document.querySelector('#numPhotos'),
-				images = document.getElementById('images'),
-				imagesMessage = document.getElementById('images-message'),
-				headerLoader = document.getElementById('header-loader');
+			if (xhr.status === 200) {
+				let imageList = JSON.parse(xhr.responseText),
+					profileUploadInfo = document.querySelector('#numPhotos'),
+					images = document.getElementById('images'),
+					imagesMessage = document.getElementById('images-message'),
+					headerLoader = document.getElementById('header-loader');
 
-			if (imageList.length > 0) {
-				// update the state of the loader
-				headerLoader.classList.add('active');
+				if (imageList.length > 0) {
+					// update the state of the loader
+					headerLoader.classList.add('active');
 
-				if (profileUploadInfo)
-					profileUploadInfo.innerHTML = `You have uploaded ${imageList.length} photos`;
+					if (profileUploadInfo)
+						profileUploadInfo.innerHTML = `You have uploaded ${imageList.length} photos`;
 
-				for (let idx in imageList) {
-					let imageBox = await new Promise(resolve => {
-						createImageBox(imageList[idx], pagetype === 'profile', resolve);
-					});
+					for (let idx in imageList) {
+						let imageBox = await new Promise(resolve => {
+							createImageBox(imageList[idx], pagetype === 'profile', resolve);
+						});
 
-					if (imageBox)
-						images.appendChild(imageBox);
+						if (imageBox)
+							images.appendChild(imageBox);
 
-					headerLoader.style.width = `${(parseInt(idx)+1) * 100 / imageList.length}%`;
+						headerLoader.style.width = `${(parseInt(idx)+1) * 100 / imageList.length}%`;
+					}
+
+					imagesMessage.remove();
+				}
+				else {
+					if (profileUploadInfo)
+						profileUploadInfo.innerHTML = `You haven't uploaded any photos yet`;
+
+					imagesMessage.innerText = 'Aw snap! No images to show!';
 				}
 
-				imagesMessage.remove();
+				headerLoader.style.width = '100%';
+				headerLoader.classList.remove('active');
+				headerLoader.classList.add('completed');
 			}
-			else {
-				if (profileUploadInfo)
-					profileUploadInfo.innerHTML = `You haven't uploaded any photos yet`;
-
-				imagesMessage.innerText = 'Aw snap! No images to show!';
-			}
-
-			headerLoader.style.width = '100%';
-			headerLoader.classList.remove('active');
-			headerLoader.classList.add('completed');
+			else
+				alert('Check your network!');
 		}
 	};
 
@@ -180,7 +184,9 @@ function createImageBox(id, viewingProfile, resolve) {
 					imageLikeIcon.classList.add('dislike');
 
 				let commentForm = imageBox.querySelector('.comment-input-form');
-				$(commentForm).on('submit', () => {
+				$(commentForm).on('submit', (event) => {
+					// stop the form submission
+					event.preventDefault();
 					postComment(imageBox);
 				});
 
@@ -252,11 +258,15 @@ function totalViews() {
 
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
-			let info = JSON.parse(xhr.responseText);
-			let numViews = $('#numViews')[0];
+			if (xhr.status === 200) {
+				let info = JSON.parse(xhr.responseText);
+				let numViews = $('#numViews')[0];
 
-			if (numViews)
-				numViews.innerHTML = parseInt(info.views);
+				if (numViews)
+					numViews.innerHTML = parseInt(info.views);
+			}
+			else
+				alert('Check your network!');
 		}
 	}
 
@@ -408,9 +418,6 @@ function likeImage(imageBox) {
 }
 
 function postComment(imageBox) {
-	// stop the form submission
-	event.preventDefault();
-
 	let id = imageBox.getAttribute('data-id'),
 		commentInput = imageBox.querySelector('.comment-input'),
 		comment = commentInput.value;
