@@ -416,16 +416,6 @@ def api_image_get(id):
             images = db.table("images")
             image = images.get(doc_id=id)
 
-            if image:
-                views = image.get("views")
-
-                if username and username not in views:
-                    views.append(username)
-                    images.update(
-                        tinydb.operations.set("views", views),
-                        doc_ids=[id]
-                    )
-
     if not image:
         return ("", 404)
 
@@ -437,6 +427,19 @@ def api_image_get(id):
     # this check prevents IDOR
     if not owner == username and not public:
         return ("", 403)
+
+    # update the views if this image is accessible by the current user
+    with db_lock:
+        with TinyDB(app.config["DATABASE"]) as db:
+            images = db.table("images")
+            views = image.get("views")
+
+            if username and username not in views:
+                views.append(username)
+                images.update(
+                    tinydb.operations.set("views", views),
+                    doc_ids=[id]
+                )
 
     filepath = os.path.join(app.config["UPLOAD_DIR"], filename)
 
