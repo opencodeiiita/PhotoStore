@@ -3,11 +3,12 @@
 # for system operations, file handling
 import base64
 import os
+import mimetypes
 import random
 import string
 import time
+from functools import wraps
 from hashlib import md5
-import mimetypes
 from pathlib import Path
 
 # for image handling
@@ -30,7 +31,6 @@ from flask import (
 from werkzeug.exceptions import RequestEntityTooLarge
 from flask_talisman import Talisman
 from flask_wtf.csrf import CSRFProtect, CSRFError
-from functools import wraps
 
 # we will be using hashes
 # from werkzeug.utils import secure_filename
@@ -376,7 +376,6 @@ def api_image_list():
         db_lock,
         TinyDB(app.config["DATABASE"]) as db
     ):
-        data = []
         images = db.table("images")
 
         if which_page == "profile" and username:
@@ -559,10 +558,10 @@ def api_image_delete():
                 images = db.table("images")
                 image = images.remove(doc_ids=[id])
 
-                imageList = images.search(Query().owner == username)
+                image_list = images.search(Query().owner == username)
                 total_likes = total_views = 0
 
-                for image in imageList:
+                for image in image_list:
                     total_likes += len(image.get("likes"))
                     total_views += len(image.get("views"))
 
@@ -674,9 +673,9 @@ def api_image_like():
             doc_ids=[id]
         )
 
-        imageList = images.search(Query().owner == username)
+        image_list = images.search(Query().owner == username)
 
-        for image in imageList:
+        for image in image_list:
             total_likes += len(image.get("likes"))
 
     return (
@@ -1060,9 +1059,9 @@ def profile():
             uploads = account.get("uploads", 0)
 
             images = db.table("images")
-            imageList = images.search(Query().owner == username)
+            image_list = images.search(Query().owner == username)
 
-            for image in imageList:
+            for image in image_list:
                 total_likes += len(image.get("likes"))
                 total_views += len(image.get("views"))
 
@@ -1098,9 +1097,9 @@ def api_user_info(username):
             uploads = account.get("uploads", 0)
 
             images = db.table("images")
-            imageList = images.search(Query().owner == username)
+            image_list = images.search(Query().owner == username)
 
-            for image in imageList:
+            for image in image_list:
                 total_likes += len(image.get("likes"))
                 total_views += len(image.get("views"))
 
