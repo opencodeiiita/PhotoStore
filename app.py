@@ -61,7 +61,7 @@ from secret import SECRET_KEY, CAPTCHA_KEY
 # some bookkeeping
 CWD = Path(os.path.dirname(__file__))
 UPLOAD_DIR = CWD / "uploads"
-ALLOWED_EXTENSIONS = {"jpg", "png", "svg", "jpeg"}
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
 
 # flask app
 app = Flask(__name__)
@@ -782,6 +782,12 @@ def avatar():
 
         if not is_allowed_file(file.filename):
             flash(f"Invalid file extension: `{ext}`", "error")
+            flash(
+                "Choose from: {}".format(
+                    ", ".join(ALLOWED_EXTENSIONS)
+                ),
+                "warning"
+            )
             return redirect(return_url)
 
         # this will clear `file.stream`, so it will become empty
@@ -790,8 +796,9 @@ def avatar():
 
         try:
             image = Image.open(buffer)
+            image.resize
         except UnidentifiedImageError:
-            flash("Invalid image!", "error")
+            flash("Unsupported image!", "error")
         else:
             # `ext_from_mime` will be of the form `.ext`
             mimetype = image.get_format_mimetype()
@@ -810,6 +817,9 @@ def avatar():
                     "warning"
                 )
 
+            # create a thumbnail instead of saving the actual image
+            # it will be shown as the profile **icon**
+            image.thumbnail((256, 256))
             filename = f"avatar-{username}.png"
             filepath = os.path.join(
                 app.config["UPLOAD_DIR"],
