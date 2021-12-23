@@ -342,7 +342,7 @@ a.underline:hover:after {
 	height: var(--avatar-size);
 	border: 0.1em grey solid;
 	border-radius: 2em;
-	padding: 0.1em;
+	padding: 0.05em;
 	transition: border var(--transition-duration);
 }
 

@@ -10,8 +10,6 @@ Trending Photos
 <!-- section separator -->
 <hr class="horizontal-separator">
 
-<script src="{{ url_for('static', filename='js/wobbly.js') }}" type="text/javascript" defer></script>
-
 <div class="wobbly-container">
 	<div class="wobbly-image-box">
 		<img src="{{ url_for('static', filename="images/family.png") }}" alt="family">
@@ -29,4 +27,6 @@ Trending Photos
 		<img src="{{ url_for('static', filename="images/fireworks.png") }}" alt="fireworks">
 	</div>
 </div>
+
+<script src="{{ url_for('static', filename='js/wobbly.js') }}" type="text/javascript" defer></script>
 {% endblock content %}

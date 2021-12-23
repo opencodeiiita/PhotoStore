@@ -1,6 +1,4 @@
 {% if captcha_enabled %}
-<script src="{{ url_for('static', filename='js/captcha.js') }}" type="text/javascript"></script>
-
 <div class="captcha-container">
 	<div class="captcha-box">
 		<label for="captcha_answer">
@@ -24,4 +22,6 @@
 		<input id="captcha-jwt" type="hidden" name="captcha_jwt" value="{{ captcha_jwt }}">
 	</div>
 </div>
+
+<script src="{{ url_for('static', filename='js/captcha.js') }}" type="text/javascript" defer></script>
 {% endif %}

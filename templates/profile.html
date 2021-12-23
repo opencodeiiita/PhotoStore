@@ -5,8 +5,6 @@ Profile
 {% endblock title %}
 
 {% block heading %}
-<script src="{{ url_for('static', filename='js/profile.js') }}" type="text/javascript" defer></script>
-
 <div class="profile-container">
 	<div class="username-container">
 		<div class="profile-username overflow-ellipsis" title="{{ username }}">{{ username }}</div>
@@ -46,8 +44,9 @@ Profile
 			<img class="icon-container" src="{{ url_for('static', filename='icons/like.png') }}" alt="likes">
 		</div>
 	</div>
-
 </div>
+
+<script src="{{ url_for('static', filename='js/profile.js') }}" type="text/javascript" defer></script>
 {% endblock heading %}
 
 {% block content %}
