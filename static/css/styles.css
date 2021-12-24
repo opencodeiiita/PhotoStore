@@ -972,18 +972,25 @@ a.reset-password {
 /* for sorting dropdown menu */
 
 #sort-by {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16em;
 	overflow: hidden;
 	padding: 0.5em 0;
 }
 
 #sort-by .dropdown {
+	flex: 1;
 	float: left;
 	overflow: hidden;
 }
 
 #sort-by .dropdown-button {
 	font-size: 1em;
+	width: 100%;
 	padding: 0.4em;
+
 	border: none;
 	outline: none;
 	color: var(--box-text-color);
@@ -998,18 +1005,25 @@ a.reset-password {
 	position: absolute;
 	display: none;
 	background-color: #f9f9f9;
-	box-shadow: 0 8px 8px #0007;
+	box-shadow: 0 0.2em 0.2em #0007;
 	z-index: 2;
 }
 
 #sort-by .dropdown:hover .dropdown-list {
 	display: block;
+	margin: 0;
 }
 
 #sort-by li {
 	font-size: 0.8em;
+	width: 100%;
 	padding: 0.4em;
 	color: black;
+	list-style: none;
+}
+
+#sort-by li:before {
+	content: ">";
 }
 
 #sort-by li:hover {
