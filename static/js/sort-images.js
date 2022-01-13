@@ -23,10 +23,10 @@ $(document).ready(() => {
 });
 
 function sortImages(lambda, order) {
-        // lambda = (imageBox) => parseInt(imageBox.getAttribute('data-id'))
-        // order  = 1 (ASC) or -1 (DESC)
+	// lambda = (imageBox) => parseInt(imageBox.getAttribute('data-id'))
+	// order  = 1 (ASC) or -1 (DESC)
 
-        if (lambda === undefined) {
+	if (lambda === undefined) {
 		var attribute = $('#sort-by-field button')[0].value;
 		lambda = (imageBox) => parseInt(imageBox.getAttribute(attribute));
 	}
@@ -35,21 +35,21 @@ function sortImages(lambda, order) {
 		order = parseInt($('#sort-by-order button')[0].value);
 	}
 
-        let comparator = function(a, b) {
-                let a_id = order * lambda(a), b_id = order * lambda(b);
+	let comparator = function(a, b) {
+		let a_id = order * lambda(a), b_id = order * lambda(b);
 
-                if (a_id < b_id)
-                        return -1;
+		if (a_id < b_id)
+			return -1;
 
-                if (a_id > b_id)
-                        return 1;
+		if (a_id > b_id)
+			return 1;
 
-                return 0;
-        }
+		return 0;
+	}
 
-        let images = $('#images')[0],
-                imagesArray = Array.from(images.children);
+	let images = $('#images')[0],
+	imagesArray = Array.from(images.children);
 
-        let sortedImages = imagesArray.sort(comparator);
-        sortedImages.forEach(image => images.appendChild(image));
+	let sortedImages = imagesArray.sort(comparator);
+	sortedImages.forEach(image => images.appendChild(image));
 }
